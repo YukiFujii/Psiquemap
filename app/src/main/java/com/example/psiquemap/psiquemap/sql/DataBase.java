@@ -20,7 +20,7 @@ public class DataBase extends SQLiteOpenHelper implements Serializable
     @Override
     public void onCreate(SQLiteDatabase db)
     {
-        //db.execSQL(ScriptSQL.getRepositorioDePerguntas());
+        db.execSQL(ScriptSQL.getPaciente());
     }
 
     @Override

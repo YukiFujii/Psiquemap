@@ -1,5 +1,6 @@
 package com.example.psiquemap.psiquemap;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,6 +11,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.psiquemap.psiquemap.entidades.Paciente;
+import com.example.psiquemap.psiquemap.sql.DataBase;
+import com.example.psiquemap.psiquemap.sql.Pacientes;
+
 public class MinhaConta extends AppCompatActivity {
 
     private EditText editRua;
@@ -19,6 +24,11 @@ public class MinhaConta extends AppCompatActivity {
     private EditText editTelefone;
     private EditText editSenha;
     private EditText editConfirmarSenha;
+    private Paciente paciente;
+
+    private DataBase dataBase;
+    private SQLiteDatabase conn;
+    private Pacientes pacientes;
 
     private Button btnSalvar;
 
@@ -38,17 +48,94 @@ public class MinhaConta extends AppCompatActivity {
         editConfirmarSenha = (EditText) findViewById(R.id.editConfirmarSenha);
         btnSalvar = (Button) findViewById(R.id.btnSalvar);
 
+        if(conexaoBD())
+        {
+            pacientes = new Pacientes(conn);
+            paciente = pacientes.getPaciente(this);
+
+            this.preencherCampos();
+        }
+        else
+        {
+            android.app.AlertDialog.Builder dlg = new android.app.AlertDialog.Builder(this);
+            dlg.setMessage("Erro ao carregar informações!");
+            dlg.setNeutralButton("OK", null);
+            dlg.show();
+        }
+
+    }
+
+    private boolean conexaoBD()
+    {
+        try {
+
+            dataBase = new DataBase(this);
+            conn = dataBase.getWritableDatabase();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+
     }
 
     public void salvar (View view){
-        if (editSenha.getText().toString().equals(editConfirmarSenha.getText().toString()))
+
+        if(camposOk())
+        {
+            this.pacientes.update(this.paciente);
             finish();
+        }
         else
         {
-            AlertDialog.Builder dlg = new AlertDialog.Builder(this);
-            dlg.setMessage("ERRO! Confirmação de senha está diferente.");
-            dlg.setNeutralButton("OK",null);
+            android.app.AlertDialog.Builder dlg = new android.app.AlertDialog.Builder(this);
+            dlg.setMessage("Erro ao salvar! Por favor, confira os dados de todos os campos e tente novamente.");
+            dlg.setNeutralButton("OK", null);
             dlg.show();
         }
+    }
+
+    private boolean camposOk()
+    {
+        if (!(editSenha.getText().toString().equals(editConfirmarSenha.getText().toString()))) {
+            this.editSenha.setText("");
+            this.editConfirmarSenha.setText("");
+            return false;
+        }
+
+        if(editRua.getText().toString().equals(""))
+            return false;
+
+        if(editNumero.getText().toString().equals(""))
+            return false;
+
+        if(editCep.getText().toString().equals(""))
+            return false;
+
+        if(editEmail.getText().toString().equals(""))
+            return false;
+
+        if(editTelefone.getText().toString().equals(""))
+            return false;
+
+        if(editSenha.getText().toString().equals(""))
+            return false;
+
+        if(editConfirmarSenha.getText().toString().equals(""))
+            return false;
+
+        return true;
+    }
+
+    private void preencherCampos()
+    {
+        this.editRua.setText(paciente.getRua());
+        this.editNumero.setText(paciente.getNumero());
+        this.editCep.setText(paciente.getCep());
+        this.editEmail.setText(paciente.getEmail());
+        this.editTelefone.setText(paciente.getTelefone());
+        this.editSenha.setText(paciente.getSenha());
     }
 }
