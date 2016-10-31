@@ -51,7 +51,7 @@ public class MinhaConta extends AppCompatActivity {
         if(conexaoBD())
         {
             pacientes = new Pacientes(conn);
-            paciente = pacientes.getPaciente(this);
+            paciente = pacientes.getPaciente();
 
             this.preencherCampos();
         }
@@ -85,6 +85,7 @@ public class MinhaConta extends AppCompatActivity {
 
         if(camposOk())
         {
+            this.updateCampos();
             this.pacientes.update(this.paciente);
             finish();
         }
@@ -97,6 +98,15 @@ public class MinhaConta extends AppCompatActivity {
         }
     }
 
+    private void updateCampos()
+    {
+        paciente.setRua(editRua.getText().toString());
+        paciente.setNumero(Integer.parseInt(editNumero.getText().toString()));
+        paciente.setCep(editCep.getText().toString());
+        paciente.setEmail(editEmail.getText().toString());
+        paciente.setTelefone(editTelefone.getText().toString());
+        paciente.setSenha(editSenha.getText().toString());
+    }
     private boolean camposOk()
     {
         if (!(editSenha.getText().toString().equals(editConfirmarSenha.getText().toString()))) {
@@ -132,10 +142,11 @@ public class MinhaConta extends AppCompatActivity {
     private void preencherCampos()
     {
         this.editRua.setText(paciente.getRua());
-        this.editNumero.setText(paciente.getNumero());
+        this.editNumero.setText(paciente.getNumero()+"");
         this.editCep.setText(paciente.getCep());
         this.editEmail.setText(paciente.getEmail());
         this.editTelefone.setText(paciente.getTelefone());
         this.editSenha.setText(paciente.getSenha());
+        this.editConfirmarSenha.setText(paciente.getSenha());
     }
 }

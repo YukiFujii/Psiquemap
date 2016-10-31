@@ -1,22 +1,23 @@
 package com.example.psiquemap.psiquemap.tipos.de.perguntas;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.example.psiquemap.psiquemap.InicioDiario;
 import com.example.psiquemap.psiquemap.R;
-import com.example.psiquemap.psiquemap.entidades.Diario;
+import com.example.psiquemap.psiquemap.entidades.PerguntaDoQuestionario;
 import com.example.psiquemap.psiquemap.entidades.Questionario;
+import com.example.psiquemap.psiquemap.sql.DataBase;
+import com.example.psiquemap.psiquemap.sql.PerguntasDoDiario;
 
 public class RespostaUnica extends AppCompatActivity {
 
@@ -28,9 +29,13 @@ public class RespostaUnica extends AppCompatActivity {
     private RadioButton rbtNaoRespUnica;
     private Button btnProximoRespUnica;
     private Questionario questionario;
-    private Diario questionarioDiario;
-    private String resposta="";
+    private int resposta=-1;
     private String tipoQuestionario;
+    private PerguntaDoQuestionario pergunta;
+
+    private DataBase dataBase;
+    private SQLiteDatabase conn;
+    private PerguntasDoDiario perguntasDoDiario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,32 +50,61 @@ public class RespostaUnica extends AppCompatActivity {
         txtPerguntaUnica = (TextView)findViewById(R.id.txtPerguntaRespUnica);
         rgrRespUnica = (RadioGroup)findViewById(R.id.rgrRespUnica);
 
-        Bundle bundle = getIntent().getExtras();
+        if(this.conexaoBD())
+        {
 
-        if ((bundle != null) && (bundle.containsKey("QUESTIONARIO")))
-        {
-            questionario = (Questionario) bundle.getSerializable("QUESTIONARIO");
-            this.setTipoQuestionario("Questionário");
-        }
-        else if((bundle != null) && (bundle.containsKey("DIARIO")))
-        {
-            questionarioDiario = (Diario) bundle.getSerializable("DIARIO");
-            this.setTipoQuestionario("Diário");
+            Bundle bundle = getIntent().getExtras();
+
+            if ((bundle != null) && (bundle.containsKey("QUESTIONARIO")))
+            {
+                questionario = (Questionario) bundle.getSerializable("QUESTIONARIO");
+                this.setTipoQuestionario("Questionário");
+            }
+            else if((bundle != null) && (bundle.containsKey("DIARIO")))
+            {
+                pergunta = (PerguntaDoQuestionario) bundle.getSerializable("DIARIO");
+                this.setTipoQuestionario("Diário");
+            }
+            else
+                finish();
+
+            txtTituloRespUnica.setText(this.getTipoQuestionario());
+
+            if(getTipoQuestionario().equals("Questionário"))
+            {
+                txtMarcadorRespoUnica.setText(questionario.indexDaProximaPegunta() + 1 + "/" + questionario.getListaDePerguntas().size());
+                txtPerguntaUnica.setText(questionario.getListaDePerguntas().get(questionario.indexDaProximaPegunta()).getPergunta());
+            }
+            else
+            {
+                this.perguntasDoDiario = new PerguntasDoDiario(conn);
+                txtMarcadorRespoUnica.setText(this.perguntasDoDiario.getIndexPerguntasAtual() + "/" + this.perguntasDoDiario.getTotalPerguntas());
+                txtPerguntaUnica.setText(this.pergunta.getPergunta());
+            }
+
         }
         else
-            finish();
-
-        txtTituloRespUnica.setText(this.getTipoQuestionario());
-
-        if(getTipoQuestionario().equals("Questionário"))
         {
-            txtMarcadorRespoUnica.setText(questionario.indexDaProximaPegunta() + 1 + "/" + questionario.getListaDePerguntas().size());
-            txtPerguntaUnica.setText(questionario.getListaDePerguntas().get(questionario.indexDaProximaPegunta()).getPergunta());
+            android.app.AlertDialog.Builder dlg = new android.app.AlertDialog.Builder(this);
+            dlg.setMessage("Erro ao conectar com banco!");
+            dlg.setNeutralButton("OK", null);
+            dlg.show();
         }
-        else
+
+    }
+
+    private boolean conexaoBD()
+    {
+        try {
+
+            dataBase = new DataBase(this);
+            conn = dataBase.getWritableDatabase();
+
+            return true;
+        }
+        catch (Exception ex)
         {
-            txtMarcadorRespoUnica.setText(questionarioDiario.indexDaProximaPegunta() + 1 + "/" + questionarioDiario.getListaDePerguntas().size());
-            txtPerguntaUnica.setText(questionarioDiario.getListaDePerguntas().get(questionarioDiario.indexDaProximaPegunta()).getPergunta());
+            return false;
         }
 
     }
@@ -84,11 +118,11 @@ public class RespostaUnica extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.rbtSimRespUnica:
                 if (checked)
-                resposta="sim";
+                resposta=1;
                 break;
             case R.id.rbtNaoRespUnica:
                 if (checked)
-                resposta="nao";
+                resposta=0;
                 break;
         }
     }
@@ -96,7 +130,7 @@ public class RespostaUnica extends AppCompatActivity {
     public void chamarTelaPerguntaRespUnica(View view)
     {
 
-        if(resposta!="")
+        if(resposta!=-1)
         {
                 String tipoDaPergunta;
 
@@ -104,7 +138,7 @@ public class RespostaUnica extends AppCompatActivity {
                 {
                     if(this.questionario.perguntasRestantes()-1>0) {
 
-                        questionario.getListaDePerguntas().get(questionario.indexDaProximaPegunta()).setFoiRespondida(true);
+                        questionario.getListaDePerguntas().get(questionario.indexDaProximaPegunta()).setFoiRespondida(1);
 
                         tipoDaPergunta = questionario.getTipoProximaPergunta();
 
@@ -139,32 +173,38 @@ public class RespostaUnica extends AppCompatActivity {
                 }
                 else
                 {
-                    if(this.questionarioDiario.perguntasRestantes()-1>0)
+                    this.pergunta.setFoiRespondida(1);
+                    this.perguntasDoDiario.update(this.pergunta);
+
+                    this.pergunta = this.perguntasDoDiario.getPerguntaDiario();
+
+                    if(this.pergunta==null)
                     {
-                        questionarioDiario.getListaDePerguntas().get(questionarioDiario.indexDaProximaPegunta()).setFoiRespondida(true);
+                        Intent it = new Intent(this, InicioDiario.class);
+                        startActivityForResult(it, 0);
+                        finish();
+                    }
+                    else
+                    {
 
-                        tipoDaPergunta = questionarioDiario.getTipoProximaPergunta();
-
-                        Log.i("Tipo proxima pergunta",tipoDaPergunta);
-
-                        switch (tipoDaPergunta) {
+                        switch (this.pergunta.getTipoPergunta()) {
                             case "boolean":
                                 Intent it = new Intent(this, RespostaUnica.class);
-                                it.putExtra("DIARIO", questionarioDiario);
+                                it.putExtra("DIARIO", this.pergunta);
                                 startActivityForResult(it, 0);
                                 finish();
                                 break;
 
                             case "null":
                                 it = new Intent(this, RespostaNull.class);
-                                it.putExtra("DIARIO", questionarioDiario);
+                                it.putExtra("DIARIO", this.pergunta);
                                 startActivityForResult(it, 0);
                                 finish();
                                 break;
 
                             case "time":
                                 it = new Intent(this, RespostaTime.class);
-                                it.putExtra("DIARIO", questionarioDiario);
+                                it.putExtra("DIARIO", this.pergunta);
                                 startActivityForResult(it, 0);
                                 finish();
                                 break;
@@ -173,8 +213,6 @@ public class RespostaUnica extends AppCompatActivity {
                                 finish();
                         }
                     }
-                    else
-                        finish();
                 }
         }
         else

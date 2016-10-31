@@ -84,7 +84,7 @@ public class InicioQuestionario extends AppCompatActivity
 
         for (int i=0;i<questionario.size();i++)
         {
-            if(questionario.get(i).getFoiRespondida()==false)
+            if(questionario.get(i).getFoiRespondida()==0)
                 ret++;
         }
 

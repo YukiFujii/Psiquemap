@@ -6,6 +6,7 @@ package com.example.psiquemap.psiquemap.sql;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.io.Serializable;
 
@@ -21,6 +22,8 @@ public class DataBase extends SQLiteOpenHelper implements Serializable
     public void onCreate(SQLiteDatabase db)
     {
         db.execSQL(ScriptSQL.getPaciente());
+        Log.i("PACIENTE","criado com sucesso!");
+        db.execSQL(ScriptSQL.getPerguntasDoDiario());
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.example.psiquemap.psiquemap.sql;
 
+import android.util.Log;
+
 /**
  * Created by yuki on 23/10/16.
  */
@@ -25,6 +27,23 @@ public class ScriptSQL {
         sqlBuilder.append("SENHA                        VARCHAR (20) , ");
         sqlBuilder.append("CNS                          VARCHAR (30)   ");
         sqlBuilder.append(");");
+
+        return sqlBuilder.toString();
+    }
+
+    public static String getPerguntasDoDiario()
+    {
+        StringBuilder sqlBuilder = new StringBuilder();
+
+        sqlBuilder.append("CREATE TABLE IF NOT EXISTS PERGUNTAS_DO_DIARIO ( ");
+        sqlBuilder.append("_id                             VARCHAR (15)");
+        sqlBuilder.append("PRIMARY KEY                               , ");
+        sqlBuilder.append("PERGUNTA                    VARCHAR (500) , ");
+        sqlBuilder.append("TIPO_PERGUNTA                VARCHAR (30) , ");
+        sqlBuilder.append("FOI_RESPONDIDA                    INTEGER   ");
+        sqlBuilder.append(");");
+
+        Log.i("PERGUNTAS_DO_DIARIO","criado com sucesso!");
 
         return sqlBuilder.toString();
     }

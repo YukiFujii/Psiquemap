@@ -7,37 +7,39 @@ import java.io.Serializable;
  */
 public class PerguntaDoQuestionario implements Serializable
 {
-    private String questionarioId;
+    private String perguntaId;
     private String modulo;
     private String questao;
     private String pergunta;
     private String tipoPergunta;
-    private boolean foiRespondida;
+    private int foiRespondida;
 
-    public PerguntaDoQuestionario(String questionarioId,String modulo,String questao,String pergunta,String tipoPergunta)
+    public  PerguntaDoQuestionario(){}
+
+    public PerguntaDoQuestionario(String perguntaId,String modulo,String questao,String pergunta,String tipoPergunta)
     {
-        this.setQuestionarioId(questionarioId);
+        this.setPerguntaId(perguntaId);
         this.setModulo(modulo);
         this.setQuestao(questao);
         this.setPergunta(pergunta);
         this.setTipoPergunta(tipoPergunta);
-        this.setFoiRespondida(false);
+        this.setFoiRespondida(0);
     }
 
     public PerguntaDoQuestionario(String perguntaId,String pergunta,String tipoPergunta)
     {
-        this.setQuestionarioId(perguntaId);
+        this.setPerguntaId(perguntaId);
         this.setPergunta(pergunta);
         this.setTipoPergunta(tipoPergunta);
-        this.setFoiRespondida(false);
+        this.setFoiRespondida(0);
     }
 
-    public String getQuestionarioId() {
-        return questionarioId;
+    public String getPerguntaId() {
+        return perguntaId;
     }
 
-    public void setQuestionarioId(String questionarioId) {
-        this.questionarioId = questionarioId;
+    public void setPerguntaId(String perguntaId) {
+        this.perguntaId = perguntaId;
     }
 
     public String getModulo() {
@@ -72,11 +74,11 @@ public class PerguntaDoQuestionario implements Serializable
         this.tipoPergunta = tipoPergunta;
     }
 
-    public boolean getFoiRespondida() {
+    public int getFoiRespondida() {
         return foiRespondida;
     }
 
-    public void setFoiRespondida(boolean foiRespondida) {
+    public void setFoiRespondida(int foiRespondida) {
         this.foiRespondida = foiRespondida;
     }
 }

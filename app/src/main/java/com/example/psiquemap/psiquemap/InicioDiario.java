@@ -1,18 +1,19 @@
 package com.example.psiquemap.psiquemap;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.psiquemap.psiquemap.entidades.Diario;
-import com.example.psiquemap.psiquemap.entidades.Questionario;
+import com.example.psiquemap.psiquemap.entidades.PerguntaDoQuestionario;
+import com.example.psiquemap.psiquemap.sql.DataBase;
+import com.example.psiquemap.psiquemap.sql.PerguntasDoDiario;
+import com.example.psiquemap.psiquemap.tipos.de.perguntas.RespostaNull;
+import com.example.psiquemap.psiquemap.tipos.de.perguntas.RespostaTime;
 import com.example.psiquemap.psiquemap.tipos.de.perguntas.RespostaUnica;
 
 public class InicioDiario extends AppCompatActivity {
@@ -20,7 +21,11 @@ public class InicioDiario extends AppCompatActivity {
     private TextView txtAviso1Diario;
     private Button btnQuestionarioDoDiario;
     private Button btnAdicionarEvento;
-    private Diario questionarioDiario;
+    private Button btnVisualizarEvento;
+
+    private DataBase dataBase;
+    private SQLiteDatabase conn;
+    private PerguntasDoDiario perguntasDoDiario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +37,42 @@ public class InicioDiario extends AppCompatActivity {
         txtAviso1Diario = (TextView)findViewById(R.id.txtAviso1Diario);
         btnAdicionarEvento = (Button)findViewById(R.id.btnAdicionarEvento);
         btnQuestionarioDoDiario = (Button)findViewById(R.id.btnQuestionarioDoDiario);
+        btnVisualizarEvento = (Button)findViewById(R.id.btnVisualizarEvento);
 
-        questionarioDiario = new Diario();
-        questionarioDiario.buscarQuestionario();
+        if(this.conexaoBD())
+        {
+            perguntasDoDiario = new PerguntasDoDiario(conn);
 
-        txtAviso1Diario.setText("- O questionário do diário possui "+questionarioDiario.perguntasRestantes()+" pergunta(s).");
+            txtAviso1Diario.setText("- Seu diário possui " + perguntasDoDiario.getPerguntasRestantes() + " pergunta(s) não respondida(s).");
+
+            if(perguntasDoDiario.getPerguntasRestantes()!=0)
+                btnQuestionarioDoDiario.setEnabled(true);
+            else
+                btnQuestionarioDoDiario.setEnabled(false);
+        }
+        else
+        {
+            android.app.AlertDialog.Builder dlg = new android.app.AlertDialog.Builder(this);
+            dlg.setMessage("Erro ao conectar com banco!");
+            dlg.setNeutralButton("OK", null);
+            dlg.show();
+        }
+    }
+
+    private boolean conexaoBD()
+    {
+        try {
+
+            dataBase = new DataBase(this);
+            conn = dataBase.getWritableDatabase();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+
     }
 
     public void chamarTelaAdicionarEvento(View view)
@@ -48,31 +84,31 @@ public class InicioDiario extends AppCompatActivity {
 
     public void chamarTelaPerguntaDiario(View view)
     {
-        String tipoDaPergunta;
+        PerguntaDoQuestionario pergunta = this.perguntasDoDiario.getPerguntaDiario();
 
-        tipoDaPergunta = questionarioDiario.getTipoProximaPergunta();
+        Intent it;
 
-        switch (tipoDaPergunta)
+        switch (pergunta.getTipoPergunta())
         {
             case "boolean":
-                Intent it = new Intent(this, RespostaUnica.class);
-                it.putExtra("DIARIO",questionarioDiario);
+                it = new Intent(this, RespostaUnica.class);
+                it.putExtra("DIARIO",pergunta);
                 startActivityForResult(it,0);
                 finish();
                 break;
 
-            case "listBox":
-                AlertDialog.Builder dlg = new AlertDialog.Builder(this);
-                dlg.setMessage("Chamou a tela listBox -> " + this.questionarioDiario.getListaDePerguntas().get(questionarioDiario.indexDaProximaPegunta()).getPergunta());
-                dlg.setNeutralButton("OK", null);
-                dlg.show();
+            case "null":
+                it = new Intent(this, RespostaNull.class);
+                it.putExtra("DIARIO",pergunta);
+                startActivityForResult(it,0);
+                finish();
                 break;
 
             case "time":
-                AlertDialog.Builder dlg2 = new AlertDialog.Builder(this);
-                dlg2.setMessage("Chamou a tela time -> " + this.questionarioDiario.getListaDePerguntas().get(questionarioDiario.indexDaProximaPegunta()).getPergunta());
-                dlg2.setNeutralButton("OK", null);
-                dlg2.show();
+                it = new Intent(this, RespostaTime.class);
+                it.putExtra("DIARIO",pergunta);
+                startActivityForResult(it,0);
+                finish();
                 break;
 
             default:

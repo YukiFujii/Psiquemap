@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import com.example.psiquemap.psiquemap.entidades.Paciente;
@@ -63,7 +64,7 @@ public class Pacientes
         conn.delete("PACIENTE","_id = ?",new String[]{""+id});
     }
 
-    public Paciente getPaciente (Context context)
+    public Paciente getPaciente ()
     {
         Paciente paciente = new Paciente();
 
@@ -87,6 +88,7 @@ public class Pacientes
             paciente.setCns(cursor.getString(11));
         }
 
+        Log.i("Numero",""+paciente.getNumero());
         return paciente;
     }
 

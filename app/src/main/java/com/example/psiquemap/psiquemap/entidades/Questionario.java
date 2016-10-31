@@ -46,10 +46,10 @@ public class Questionario implements Serializable
             this.listaDePerguntas.add(questao3);
             this.listaDePerguntas.add(questao4);
 
-            this.listaDePerguntas.get(0).setFoiRespondida(false);
-            this.listaDePerguntas.get(1).setFoiRespondida(false);
-            this.listaDePerguntas.get(2).setFoiRespondida(false);
-            this.listaDePerguntas.get(3).setFoiRespondida(false);
+            this.listaDePerguntas.get(0).setFoiRespondida(0);
+            this.listaDePerguntas.get(1).setFoiRespondida(0);
+            this.listaDePerguntas.get(2).setFoiRespondida(0);
+            this.listaDePerguntas.get(3).setFoiRespondida(0);
 
     }
 
@@ -59,7 +59,7 @@ public class Questionario implements Serializable
 
         for (int i = 0; i< this.listaDePerguntas.size(); i++)
         {
-            if(this.listaDePerguntas.get(i).getFoiRespondida()==false)
+            if(this.listaDePerguntas.get(i).getFoiRespondida()==0)
                 ret++;
         }
 
