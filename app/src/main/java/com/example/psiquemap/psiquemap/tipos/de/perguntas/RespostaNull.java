@@ -9,11 +9,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.psiquemap.psiquemap.InicioDiario;
+import com.example.psiquemap.psiquemap.InicioQuestionario;
 import com.example.psiquemap.psiquemap.R;
 import com.example.psiquemap.psiquemap.entidades.PerguntaDoQuestionario;
-import com.example.psiquemap.psiquemap.entidades.Questionario;
 import com.example.psiquemap.psiquemap.sql.DataBase;
 import com.example.psiquemap.psiquemap.sql.PerguntasDoDiario;
+import com.example.psiquemap.psiquemap.sql.PerguntasDoQuestionarioMINI;
 
 public class RespostaNull extends AppCompatActivity {
 
@@ -21,13 +22,13 @@ public class RespostaNull extends AppCompatActivity {
     private TextView txtMarcadorRespNull;
     private TextView txtPerguntaRespNull;
 
-    private Questionario questionario;
     private String tipoQuestionario;
     private PerguntaDoQuestionario pergunta;
 
     private DataBase dataBase;
     private SQLiteDatabase conn;
     private PerguntasDoDiario perguntasDoDiario;
+    private PerguntasDoQuestionarioMINI perguntasDoQuestionarioMINI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,7 @@ public class RespostaNull extends AppCompatActivity {
 
             if ((bundle != null) && (bundle.containsKey("QUESTIONARIO")))
             {
-                questionario = (Questionario) bundle.getSerializable("QUESTIONARIO");
+                pergunta = (PerguntaDoQuestionario) bundle.getSerializable("QUESTIONARIO");
                 this.setTipoQuestionario("Questionário");
             }
             else if((bundle != null) && (bundle.containsKey("DIARIO")))
@@ -62,8 +63,9 @@ public class RespostaNull extends AppCompatActivity {
 
             if(getTipoQuestionario().equals("Questionário"))
             {
-                txtMarcadorRespNull.setText(questionario.indexDaProximaPegunta() + 1 + "/" + questionario.getListaDePerguntas().size());
-                txtPerguntaRespNull.setText(questionario.getListaDePerguntas().get(questionario.indexDaProximaPegunta()).getPergunta());
+                this.perguntasDoQuestionarioMINI = new PerguntasDoQuestionarioMINI(conn);
+                txtMarcadorRespNull.setText(this.perguntasDoQuestionarioMINI.getIndexPerguntasAtual() + "/" + this.perguntasDoQuestionarioMINI.getTotalPerguntas());
+                txtPerguntaRespNull.setText(this.pergunta.getPergunta());
             }
             else
             {
@@ -99,33 +101,42 @@ public class RespostaNull extends AppCompatActivity {
 
     public void chamarTelaPerguntaRespNull(View view)
     {
-            String tipoDaPergunta;
 
-            if (this.getTipoQuestionario().equals("Questionário")) {
+            if (this.tipoQuestionario.equals("Questionário"))
+            {
 
-                if(this.questionario.perguntasRestantes()-1>0) {
-                    questionario.getListaDePerguntas().get(questionario.indexDaProximaPegunta()).setFoiRespondida(1);
+                this.pergunta.setFoiRespondida(1);
+                this.perguntasDoQuestionarioMINI.update(this.pergunta);
 
-                    tipoDaPergunta = questionario.getTipoProximaPergunta();
+                this.pergunta = this.perguntasDoQuestionarioMINI.getPerguntaQuestionarioMINI();
 
-                    switch (tipoDaPergunta) {
+                if(this.pergunta==null)
+                {
+                    Intent it = new Intent(this, InicioQuestionario.class);
+                    startActivityForResult(it, 0);
+                    finish();
+                }
+                else
+                {
+
+                    switch (this.pergunta.getTipoPergunta()) {
                         case "boolean":
                             Intent it = new Intent(this, RespostaUnica.class);
-                            it.putExtra("QUESTIONARIO", questionario);
+                            it.putExtra("QUESTIONARIO", this.pergunta);
                             startActivityForResult(it, 0);
                             finish();
                             break;
 
                         case "null":
                             it = new Intent(this, RespostaNull.class);
-                            it.putExtra("QUESTIONARIO", questionario);
+                            it.putExtra("QUESTIONARIO", this.pergunta);
                             startActivityForResult(it, 0);
                             finish();
                             break;
 
                         case "time":
                             it = new Intent(this, RespostaTime.class);
-                            it.putExtra("QUESTIONARIO", questionario);
+                            it.putExtra("QUESTIONARIO", this.pergunta);
                             startActivityForResult(it, 0);
                             finish();
                             break;
@@ -134,8 +145,6 @@ public class RespostaNull extends AppCompatActivity {
                             finish();
                     }
                 }
-                else
-                    finish();
             }
             else
             {

@@ -43,9 +43,23 @@ public class ScriptSQL {
         sqlBuilder.append("FOI_RESPONDIDA                    INTEGER   ");
         sqlBuilder.append(");");
 
-        Log.i("PERGUNTAS_DO_DIARIO","criado com sucesso!");
-
         return sqlBuilder.toString();
     }
 
+    public static String getPerguntasDoQuestionarioMINI()
+    {
+        StringBuilder sqlBuilder = new StringBuilder();
+
+        sqlBuilder.append("CREATE TABLE IF NOT EXISTS PERGUNTAS_DO_QUESTIONARIO_MINI ( ");
+        sqlBuilder.append("_id                             VARCHAR (1),");
+        //sqlBuilder.append("PRIMARY KEY                               , ");
+        sqlBuilder.append("MODULO                       VARCHAR (50) , ");
+        sqlBuilder.append("QUESTAO                       VARCHAR (3) , ");
+        sqlBuilder.append("PERGUNTA                    VARCHAR (500) , ");
+        sqlBuilder.append("TIPO_PERGUNTA                VARCHAR (30) , ");
+        sqlBuilder.append("FOI_RESPONDIDA                    INTEGER   ");
+        sqlBuilder.append(");");
+
+        return sqlBuilder.toString();
+    }
 }

@@ -15,11 +15,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.example.psiquemap.psiquemap.InicioDiario;
+import com.example.psiquemap.psiquemap.InicioQuestionario;
 import com.example.psiquemap.psiquemap.R;
 import com.example.psiquemap.psiquemap.entidades.PerguntaDoQuestionario;
-import com.example.psiquemap.psiquemap.entidades.Questionario;
 import com.example.psiquemap.psiquemap.sql.DataBase;
 import com.example.psiquemap.psiquemap.sql.PerguntasDoDiario;
+import com.example.psiquemap.psiquemap.sql.PerguntasDoQuestionarioMINI;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -30,7 +31,7 @@ public class RespostaTime extends AppCompatActivity {
     private TextView txtTituloRespTime;
     private TextView txtMarcadorRespTime;
     private TextView txtPerguntaRespTime;
-    private Questionario questionario;
+
     private String resposta="";
     private String tipoQuestionario;
     private EditText editTime;
@@ -41,6 +42,7 @@ public class RespostaTime extends AppCompatActivity {
     private DataBase dataBase;
     private SQLiteDatabase conn;
     private PerguntasDoDiario perguntasDoDiario;
+    private PerguntasDoQuestionarioMINI perguntasDoQuestionarioMINI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +63,12 @@ public class RespostaTime extends AppCompatActivity {
 
             if ((bundle != null) && (bundle.containsKey("QUESTIONARIO")))
             {
-                questionario = (Questionario) bundle.getSerializable("QUESTIONARIO");
+                this.pergunta = (PerguntaDoQuestionario) bundle.getSerializable("QUESTIONARIO");
                 this.setTipoQuestionario("Questionário");
             }
             else if((bundle != null) && (bundle.containsKey("DIARIO")))
             {
-                pergunta = (PerguntaDoQuestionario) bundle.getSerializable("DIARIO");
+                this.pergunta = (PerguntaDoQuestionario) bundle.getSerializable("DIARIO");
                 this.setTipoQuestionario("Diário");
             }
             else
@@ -77,8 +79,9 @@ public class RespostaTime extends AppCompatActivity {
 
             if(getTipoQuestionario().equals("Questionário"))
             {
-                txtMarcadorRespTime.setText(questionario.indexDaProximaPegunta() + 1 + "/" + questionario.getListaDePerguntas().size());
-                txtPerguntaRespTime.setText(questionario.getListaDePerguntas().get(questionario.indexDaProximaPegunta()).getPergunta());
+                this.perguntasDoQuestionarioMINI = new PerguntasDoQuestionarioMINI(conn);
+                txtMarcadorRespTime.setText(this.perguntasDoQuestionarioMINI.getIndexPerguntasAtual() + "/" + this.perguntasDoQuestionarioMINI.getTotalPerguntas());
+                txtPerguntaRespTime.setText(this.pergunta.getPergunta());
             }
             else
             {
@@ -119,34 +122,41 @@ public class RespostaTime extends AppCompatActivity {
 
         if(resposta!="")
         {
-                String tipoDaPergunta;
 
-                if (this.getTipoQuestionario().equals("Questionário")) {
-                    if(this.questionario.perguntasRestantes()-1>0) {
-                        Intent it;
+                if (this.tipoQuestionario.equals("Questionário"))
+                {
+                    this.pergunta.setFoiRespondida(1);
+                    this.perguntasDoQuestionarioMINI.update(this.pergunta);
 
-                        questionario.getListaDePerguntas().get(questionario.indexDaProximaPegunta()).setFoiRespondida(1);
+                    this.pergunta = this.perguntasDoQuestionarioMINI.getPerguntaQuestionarioMINI();
 
-                        tipoDaPergunta = questionario.getTipoProximaPergunta();
+                    if(this.pergunta==null)
+                    {
+                        Intent it = new Intent(this, InicioQuestionario.class);
+                        startActivityForResult(it, 0);
+                        finish();
+                    }
+                    else
+                    {
 
-                        switch (tipoDaPergunta) {
+                        switch (this.pergunta.getTipoPergunta()) {
                             case "boolean":
-                                it = new Intent(this, RespostaUnica.class);
-                                it.putExtra("QUESTIONARIO", questionario);
+                                Intent it = new Intent(this, RespostaUnica.class);
+                                it.putExtra("QUESTIONARIO", this.pergunta);
                                 startActivityForResult(it, 0);
                                 finish();
                                 break;
 
                             case "null":
                                 it = new Intent(this, RespostaNull.class);
-                                it.putExtra("QUESTIONARIO", questionario);
+                                it.putExtra("QUESTIONARIO", this.pergunta);
                                 startActivityForResult(it, 0);
                                 finish();
                                 break;
 
                             case "time":
                                 it = new Intent(this, RespostaTime.class);
-                                it.putExtra("QUESTIONARIO", questionario);
+                                it.putExtra("QUESTIONARIO", this.pergunta);
                                 startActivityForResult(it, 0);
                                 finish();
                                 break;
@@ -155,8 +165,6 @@ public class RespostaTime extends AppCompatActivity {
                                 finish();
                         }
                     }
-                    else
-                        finish();
                 }
                 else
                 {

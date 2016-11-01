@@ -14,6 +14,9 @@
     import com.example.psiquemap.psiquemap.sql.DataBase;
     import com.example.psiquemap.psiquemap.sql.Pacientes;
     import com.example.psiquemap.psiquemap.sql.PerguntasDoDiario;
+    import com.example.psiquemap.psiquemap.sql.PerguntasDoQuestionarioMINI;
+
+    import java.util.ArrayList;
 
  public class LoginActivity extends AppCompatActivity
  {
@@ -106,6 +109,7 @@
 
                      pacientes.insert(paciente);
                      this.inserirPerguntasNoDiario();
+                     this.inserirPerguntasNoQuestionarioMINI();
                      break;
 
                  case "ronaldo@gmail.com":
@@ -115,6 +119,7 @@
 
                      pacientes.insert(paciente2);
                      this.inserirPerguntasNoDiario();
+                     this.inserirPerguntasNoQuestionarioMINI();
                      break;
 
                  default:
@@ -148,6 +153,35 @@
          perguntasDoDiario.insert(diario3);
          perguntasDoDiario.insert(diario4);
          perguntasDoDiario.insert(diario5);
+     }
+
+     private void inserirPerguntasNoQuestionarioMINI()
+     {
+
+         PerguntasDoQuestionarioMINI perguntasDoQuestionarioMINI = new PerguntasDoQuestionarioMINI(conn);
+
+         PerguntaDoQuestionario questao1 = new PerguntaDoQuestionario("A","EPISÓDIO DEPRESSIVO MAIOR (EDM)","1",
+                 "Nas duas últimas semanas, sentiu-se triste, desanimado(a), deprimido(a), durante a maior " +
+                         "parte do dia, quase todos os dias?","boolean");
+
+         PerguntaDoQuestionario questao2 = new PerguntaDoQuestionario("A","EPISÓDIO DEPRESSIVO MAIOR (EDM)","2",
+                 "Nas duas últimas semanas, quase todo tempo, teve o sentimento de não ter mais gosto por " +
+                         "nada, de ter perdido o interesse e o prazer pelas coisas que lhe agradam habitualmente?","boolean");
+
+         PerguntaDoQuestionario questao3 = new PerguntaDoQuestionario("A","EPISÓDIO DEPRESSIVO MAIOR (EDM)","3",
+                 "Durante as duas últimas semanas, quando se sentia deprimido(a) / sem interesse pela " +
+                         "maioria das coisas:","null");
+
+         PerguntaDoQuestionario questao4 = new PerguntaDoQuestionario("A","EPISÓDIO DEPRESSIVO MAIOR (EDM)","3a",
+                 "O seu apetite mudou de forma significativa, ou o seu peso aumentou ou diminuiu sem que " +
+                         "o tenha desejado ? (variação de + 5% ao longo do mês, isto é, + 3,5 Kg, para uma pessoa " +
+                         "de 65 Kg)","boolean");
+
+         perguntasDoQuestionarioMINI.insertPerguntaDoQuestionarioMINI(questao1);
+         perguntasDoQuestionarioMINI.insertPerguntaDoQuestionarioMINI(questao2);
+         perguntasDoQuestionarioMINI.insertPerguntaDoQuestionarioMINI(questao3);
+         perguntasDoQuestionarioMINI.insertPerguntaDoQuestionarioMINI(questao4);
+
      }
 
  }

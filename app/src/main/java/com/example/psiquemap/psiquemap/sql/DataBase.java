@@ -22,8 +22,8 @@ public class DataBase extends SQLiteOpenHelper implements Serializable
     public void onCreate(SQLiteDatabase db)
     {
         db.execSQL(ScriptSQL.getPaciente());
-        Log.i("PACIENTE","criado com sucesso!");
         db.execSQL(ScriptSQL.getPerguntasDoDiario());
+        db.execSQL(ScriptSQL.getPerguntasDoQuestionarioMINI());
     }
 
     @Override

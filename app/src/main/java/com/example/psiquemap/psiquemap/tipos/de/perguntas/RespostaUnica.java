@@ -13,22 +13,24 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.example.psiquemap.psiquemap.InicioDiario;
+import com.example.psiquemap.psiquemap.InicioQuestionario;
 import com.example.psiquemap.psiquemap.R;
 import com.example.psiquemap.psiquemap.entidades.PerguntaDoQuestionario;
-import com.example.psiquemap.psiquemap.entidades.Questionario;
 import com.example.psiquemap.psiquemap.sql.DataBase;
 import com.example.psiquemap.psiquemap.sql.PerguntasDoDiario;
+import com.example.psiquemap.psiquemap.sql.PerguntasDoQuestionarioMINI;
 
 public class RespostaUnica extends AppCompatActivity {
 
     private TextView txtTituloRespUnica;
     private TextView txtMarcadorRespoUnica;
     private TextView txtPerguntaUnica;
+
     private RadioGroup rgrRespUnica;
     private RadioButton rbtSimRespUnica;
     private RadioButton rbtNaoRespUnica;
     private Button btnProximoRespUnica;
-    private Questionario questionario;
+
     private int resposta=-1;
     private String tipoQuestionario;
     private PerguntaDoQuestionario pergunta;
@@ -36,6 +38,7 @@ public class RespostaUnica extends AppCompatActivity {
     private DataBase dataBase;
     private SQLiteDatabase conn;
     private PerguntasDoDiario perguntasDoDiario;
+    private PerguntasDoQuestionarioMINI perguntasDoQuestionarioMINI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +60,7 @@ public class RespostaUnica extends AppCompatActivity {
 
             if ((bundle != null) && (bundle.containsKey("QUESTIONARIO")))
             {
-                questionario = (Questionario) bundle.getSerializable("QUESTIONARIO");
+                pergunta = (PerguntaDoQuestionario) bundle.getSerializable("QUESTIONARIO");
                 this.setTipoQuestionario("Questionário");
             }
             else if((bundle != null) && (bundle.containsKey("DIARIO")))
@@ -72,8 +75,9 @@ public class RespostaUnica extends AppCompatActivity {
 
             if(getTipoQuestionario().equals("Questionário"))
             {
-                txtMarcadorRespoUnica.setText(questionario.indexDaProximaPegunta() + 1 + "/" + questionario.getListaDePerguntas().size());
-                txtPerguntaUnica.setText(questionario.getListaDePerguntas().get(questionario.indexDaProximaPegunta()).getPergunta());
+                this.perguntasDoQuestionarioMINI = new PerguntasDoQuestionarioMINI(conn);
+                txtMarcadorRespoUnica.setText(this.perguntasDoQuestionarioMINI.getIndexPerguntasAtual() + "/" + this.perguntasDoQuestionarioMINI.getTotalPerguntas());
+                txtPerguntaUnica.setText(this.pergunta.getPergunta());
             }
             else
             {
@@ -132,34 +136,40 @@ public class RespostaUnica extends AppCompatActivity {
 
         if(resposta!=-1)
         {
-                String tipoDaPergunta;
-
-                if (this.getTipoQuestionario().equals("Questionário"))
+                if (this.tipoQuestionario.equals("Questionário"))
                 {
-                    if(this.questionario.perguntasRestantes()-1>0) {
+                    this.pergunta.setFoiRespondida(1);
+                    this.perguntasDoQuestionarioMINI.update(this.pergunta);
 
-                        questionario.getListaDePerguntas().get(questionario.indexDaProximaPegunta()).setFoiRespondida(1);
+                    this.pergunta = this.perguntasDoQuestionarioMINI.getPerguntaQuestionarioMINI();
 
-                        tipoDaPergunta = questionario.getTipoProximaPergunta();
+                    if(this.pergunta==null)
+                    {
+                        Intent it = new Intent(this, InicioQuestionario.class);
+                        startActivityForResult(it, 0);
+                        finish();
+                    }
+                    else
+                    {
 
-                        switch (tipoDaPergunta) {
+                        switch (this.pergunta.getTipoPergunta()) {
                             case "boolean":
                                 Intent it = new Intent(this, RespostaUnica.class);
-                                it.putExtra("QUESTIONARIO", questionario);
+                                it.putExtra("QUESTIONARIO", this.pergunta);
                                 startActivityForResult(it, 0);
                                 finish();
                                 break;
 
                             case "null":
                                 it = new Intent(this, RespostaNull.class);
-                                it.putExtra("QUESTIONARIO", questionario);
+                                it.putExtra("QUESTIONARIO", this.pergunta);
                                 startActivityForResult(it, 0);
                                 finish();
                                 break;
 
                             case "time":
                                 it = new Intent(this, RespostaTime.class);
-                                it.putExtra("QUESTIONARIO", questionario);
+                                it.putExtra("QUESTIONARIO", this.pergunta);
                                 startActivityForResult(it, 0);
                                 finish();
                                 break;
@@ -168,8 +178,6 @@ public class RespostaUnica extends AppCompatActivity {
                                 finish();
                         }
                     }
-                    else
-                        finish();
                 }
                 else
                 {
