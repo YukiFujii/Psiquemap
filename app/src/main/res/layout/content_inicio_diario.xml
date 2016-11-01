@@ -78,7 +78,7 @@
                 android:text="Adicionar Acontecimento"
                 android:id="@+id/btnAdicionarEvento"
                 android:layout_gravity="center_vertical"
-                android:onClick="chamarTelaAdicionarEvento"/>
+                android:onClick="chamarTelaAdicionarAcontecimento"/>
         </LinearLayout>
 
         <LinearLayout
@@ -93,7 +93,7 @@
                 android:text="Visualizar Acontecimentos"
                 android:id="@+id/btnVisualizarEvento"
                 android:layout_gravity="center_vertical"
-                android:onClick="chamarTelaVisualizarEvento"/>
+                android:onClick="chamarTelaVisualizarAcontecimento"/>
         </LinearLayout>
 
     </LinearLayout>

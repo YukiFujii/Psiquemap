@@ -15,7 +15,7 @@ import com.example.psiquemap.psiquemap.entidades.Paciente;
 
 public class Pacientes
 {
-    private SQLiteDatabase conn;
+    private static SQLiteDatabase conn;
 
     public Pacientes(SQLiteDatabase conn)
     {
@@ -88,8 +88,23 @@ public class Pacientes
             paciente.setCns(cursor.getString(11));
         }
 
-        Log.i("Numero",""+paciente.getNumero());
         return paciente;
+    }
+
+    public static String getIdPaciente ()
+    {
+        String str="";
+
+        Cursor cursor = conn.query("PACIENTE",null,null,null,null,null,null);
+
+        cursor.moveToFirst();
+
+        if(cursor.getCount()>0)
+              str = cursor.getString(0);
+
+        Log.i("ID do paciente",str);
+
+        return str;
     }
 
 }

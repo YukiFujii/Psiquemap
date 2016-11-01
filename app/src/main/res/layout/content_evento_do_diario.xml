@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.psiquemap.psiquemap.EventoDoDiario"
+    tools:context="com.example.psiquemap.psiquemap.AcontecimentoDoDiario"
     tools:showIn="@layout/activity_evento_do_diario"
     android:orientation="vertical">
 

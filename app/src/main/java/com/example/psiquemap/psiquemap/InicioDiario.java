@@ -75,9 +75,16 @@ public class InicioDiario extends AppCompatActivity {
 
     }
 
-    public void chamarTelaAdicionarEvento(View view)
+    public void chamarTelaAdicionarAcontecimento(View view)
     {
-        Intent it = new Intent(this,EventoDoDiario.class);
+        Intent it = new Intent(this,AcontecimentoDoDiario.class);
+        startActivityForResult(it,0);
+        finish();
+    }
+
+    public void chamarTelaVisualizarAcontecimento(View view)
+    {
+        Intent it = new Intent(this,VisualizarAcontecimentos.class);
         startActivityForResult(it,0);
         finish();
     }

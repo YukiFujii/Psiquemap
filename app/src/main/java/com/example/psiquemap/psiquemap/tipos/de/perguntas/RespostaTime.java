@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import com.example.psiquemap.psiquemap.sql.DataBase;
 import com.example.psiquemap.psiquemap.sql.PerguntasDoDiario;
 import com.example.psiquemap.psiquemap.sql.PerguntasDoQuestionarioMINI;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -256,6 +258,26 @@ public class RespostaTime extends AppCompatActivity {
 
         editTime.setText(str);
 
+        /*
+        Date to String - String to Date
+
+        DateFormat data = DateFormat.getDateInstance(DateFormat.MEDIUM);
+        Calendar calendar1 = Calendar.getInstance();
+        String dt = data.format(calendar1.getTime());
+
+        Log.i("Data",dt);
+
+        try {
+
+            Calendar calendar2 = Calendar.getInstance();
+            calendar2.setTime(data.parse(dt));
+
+            Log.i("Data2",data.format(calendar2.getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        */
     }
 
 }

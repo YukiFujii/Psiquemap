@@ -36,4 +36,6 @@
     <string name="txtDosagem">Dosagem:</string>
     <string name="title_activity_feedback">Feedback</string>
     <string name="title_activity_resposta_null">RespostaNull</string>
+    <string name="title_activity_visualizar_acontecimentos">VisualizarAcontecimentos</string>
+    <string name="title_activity_detalhe_acontecimento">DetalheAcontecimento</string>
 </resources>

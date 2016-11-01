@@ -51,13 +51,29 @@ public class ScriptSQL {
         StringBuilder sqlBuilder = new StringBuilder();
 
         sqlBuilder.append("CREATE TABLE IF NOT EXISTS PERGUNTAS_DO_QUESTIONARIO_MINI ( ");
-        sqlBuilder.append("_id                             VARCHAR (1),");
-        //sqlBuilder.append("PRIMARY KEY                               , ");
+        sqlBuilder.append("_id                            VARCHAR (1), ");
         sqlBuilder.append("MODULO                       VARCHAR (50) , ");
         sqlBuilder.append("QUESTAO                       VARCHAR (3) , ");
         sqlBuilder.append("PERGUNTA                    VARCHAR (500) , ");
         sqlBuilder.append("TIPO_PERGUNTA                VARCHAR (30) , ");
-        sqlBuilder.append("FOI_RESPONDIDA                    INTEGER   ");
+        sqlBuilder.append("FOI_RESPONDIDA                    INTEGER , ");
+        sqlBuilder.append("PRIMARY KEY                    (_id,QUESTAO)");
+        sqlBuilder.append(");");
+
+        return sqlBuilder.toString();
+    }
+
+    public static String getAcontecimentos()
+    {
+        StringBuilder sqlBuilder = new StringBuilder();
+
+        sqlBuilder.append("CREATE TABLE IF NOT EXISTS ACONTECIMENTOS  ( ");
+        sqlBuilder.append("_id_PACIENTE                 VARCHAR (15) , ");
+        sqlBuilder.append("DATA                         VARCHAR (10) , ");
+        sqlBuilder.append("HORA                          VARCHAR (5) , ");
+        sqlBuilder.append("SENTIMENTO                    VARCHAR (3) , ");
+        sqlBuilder.append("TITULO                      VARCHAR (100) , ");
+        sqlBuilder.append("DESCRICAO                     VARCHAR (1000)");
         sqlBuilder.append(");");
 
         return sqlBuilder.toString();

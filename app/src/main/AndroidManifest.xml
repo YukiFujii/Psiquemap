@@ -12,11 +12,9 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
 
     <application
         android:allowBackup="true"
@@ -64,7 +62,7 @@
             android:label="@string/title_activity_inicio_diario"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".EventoDoDiario"
+            android:name=".AcontecimentoDoDiario"
             android:label="@string/title_activity_evento_do_diario"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -82,10 +80,11 @@
 
         <receiver
             android:name=".alarme.BroadcastReceiverAlarme"
-            android:enabled="true" >
+            android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="DISPARAR_ALARME" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
@@ -97,6 +96,14 @@
         <activity
             android:name=".tipos.de.perguntas.RespostaNull"
             android:label="@string/title_activity_resposta_null"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".VisualizarAcontecimentos"
+            android:label="@string/title_activity_visualizar_acontecimentos"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".DetalheAcontecimento"
+            android:label="@string/title_activity_detalhe_acontecimento"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

@@ -24,6 +24,7 @@ public class DataBase extends SQLiteOpenHelper implements Serializable
         db.execSQL(ScriptSQL.getPaciente());
         db.execSQL(ScriptSQL.getPerguntasDoDiario());
         db.execSQL(ScriptSQL.getPerguntasDoQuestionarioMINI());
+        db.execSQL(ScriptSQL.getAcontecimentos());
     }
 
     @Override

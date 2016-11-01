@@ -34,6 +34,7 @@ public class Evento
         String ret="";
 
         DateFormat format = DateFormat.getDateInstance(DateFormat.MEDIUM);
+
         ret = format.format(this.getDataEvento());
 
         return ret;
