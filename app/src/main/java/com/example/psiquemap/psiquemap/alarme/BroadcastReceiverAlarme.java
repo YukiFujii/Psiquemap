@@ -1,6 +1,5 @@
 package com.example.psiquemap.psiquemap.alarme;
 
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -16,8 +15,6 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.example.psiquemap.psiquemap.DetalheMedicamento;
-import com.example.psiquemap.psiquemap.MainActivity;
-import com.example.psiquemap.psiquemap.Medicacao;
 import com.example.psiquemap.psiquemap.R;
 import com.example.psiquemap.psiquemap.entidades.Medicamento;
 

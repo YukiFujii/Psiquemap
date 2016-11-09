@@ -67,7 +67,7 @@ public class ScriptSQL {
     {
         StringBuilder sqlBuilder = new StringBuilder();
 
-        sqlBuilder.append("CREATE TABLE IF NOT EXISTS ACONTECIMENTOS  ( ");
+        sqlBuilder.append("CREATE TABLE IF NOT EXISTS ACONTECIMENTOS ( ");
         sqlBuilder.append("_id_PACIENTE                 VARCHAR (15) , ");
         sqlBuilder.append("DATA                         VARCHAR (10) , ");
         sqlBuilder.append("HORA                          VARCHAR (5) , ");
@@ -78,4 +78,73 @@ public class ScriptSQL {
 
         return sqlBuilder.toString();
     }
+
+    public static String getSintomas()
+    {
+        StringBuilder sqlBuilder = new StringBuilder();
+
+        sqlBuilder.append("CREATE TABLE IF NOT EXISTS SINTOMAS       ( ");
+        sqlBuilder.append("_id_CATEGORIA                VARCHAR (15) , ");
+        sqlBuilder.append("_id_SINTOMA                  VARCHAR (15) , ");
+        sqlBuilder.append("NOME                         VARCHAR (20) , ");
+        sqlBuilder.append("PRIMARY KEY      (_id_CATEGORIA,_id_SINTOMA)");
+        sqlBuilder.append(");");
+
+        return sqlBuilder.toString();
+    }
+
+    public static String getSintomasSentidos()
+    {
+        StringBuilder sqlBuilder = new StringBuilder();
+
+        sqlBuilder.append("CREATE TABLE IF NOT EXISTS SINTOMAS_SENTIDOS(            ");
+        sqlBuilder.append("_id_PACIENTE                              VARCHAR (15) , ");
+        sqlBuilder.append("_id_CATEGORIA                             VARCHAR (15) , ");
+        sqlBuilder.append("_id_SINTOMA                               VARCHAR (15) , ");
+        sqlBuilder.append("NOME                                      VARCHAR (20) , ");
+        sqlBuilder.append("DATA                                      VARCHAR (10) , ");
+        sqlBuilder.append("PRIMARY KEY (_id_PACIENTE,_id_CATEGORIA,_id_SINTOMA,DATA)");
+        sqlBuilder.append(");");
+
+        return sqlBuilder.toString();
+    }
+
+    public static String getFeedback()
+    {
+        StringBuilder sqlBuilder = new StringBuilder();
+
+        sqlBuilder.append("CREATE TABLE IF NOT EXISTS FEEDBACK(                     ");
+        sqlBuilder.append("_id_PACIENTE                              VARCHAR (15) , ");
+        sqlBuilder.append("DATA                                      VARCHAR (10) , ");
+        sqlBuilder.append("SENTIMENTO                                VARCHAR (25) , ");
+        sqlBuilder.append("OBSERVACAO                               VARCHAR (500) , ");
+        sqlBuilder.append("PRIMARY KEY                           (_id_PACIENTE,DATA)");
+        sqlBuilder.append(");");
+
+        return sqlBuilder.toString();
+    }
+
+    public static String getMedicamentos()
+    {
+        StringBuilder sqlBuilder = new StringBuilder();
+
+        sqlBuilder.append("CREATE TABLE IF NOT EXISTS MEDICAMENTOS(                  ");
+        sqlBuilder.append("_id_PACIENTE                              VARCHAR (15) , ");
+        sqlBuilder.append("_id_MEDICACAO                             VARCHAR (15) , ");
+        sqlBuilder.append("NOME_MEDICACAO                            VARCHAR (25) , ");
+        sqlBuilder.append("INTERVALO                                      INTEGER , ");
+        sqlBuilder.append("DOSE                                           INTEGER , ");
+        sqlBuilder.append("DURANTE                                        INTEGER , ");
+        sqlBuilder.append("OBSERVACOES                              VARCHAR (250) , ");
+        sqlBuilder.append("ULTIMO_HORARIO                             VARCHAR (5) , ");
+        sqlBuilder.append("PROXIMO_HORARIO                            VARCHAR (5) , ");
+        sqlBuilder.append("MEDICACAO_CONTINUA                             INTEGER , ");
+        sqlBuilder.append("QTD_REST_MEDICAMENTO                           INTEGER , ");
+        sqlBuilder.append("ALARME_ATIVO                                   INTEGER , ");
+        sqlBuilder.append("PRIMARY KEY                  (_id_PACIENTE,_id_MEDICACAO)");
+        sqlBuilder.append(");");
+
+        return sqlBuilder.toString();
+    }
+
 }

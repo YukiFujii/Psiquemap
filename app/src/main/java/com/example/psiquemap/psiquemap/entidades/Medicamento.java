@@ -3,51 +3,59 @@ package com.example.psiquemap.psiquemap.entidades;
 import android.content.Context;
 import android.widget.ArrayAdapter;
 
+import com.example.psiquemap.psiquemap.sql.Pacientes;
+
 import java.io.Serializable;
-import java.util.Calendar;
 
 /**
  * Created by YUKI FUJII on 19/09/2016.
  */
 public class Medicamento implements Serializable
 {
+        private String idPaciente;
+        private String idMedicacao;
         private String nomeMedicacao;
         private int intervalo;
-        private float dose;
+        private int dose;
         private int durante;
         private String observacoes;
-        private Calendar ultimoHorario;
-        private Calendar proximoHorario;
+        private String ultimoHorario;
+        private String proximoHorario;
+        private int medicacaoContinua;
         private int qtdRestantesDoMedicamento;
-        private boolean flagDeletarMedicamento;
-        private boolean alarmeAtivo;
-        //private int idSintoma;
+        private int alarmeAtivo;
 
-        public Medicamento (String nomeMedicacao,int intervalo,float dose,int durante,String observacoes)
+        public Medicamento(){}
+
+        public Medicamento (String idMedicacao,String nomeMedicacao,int intervalo,int dose,int durante,String observacoes,int medicacaoContinua)
         {
+            setIdPaciente(Pacientes.getIdPaciente());
+            setIdMedicacao(idMedicacao);
             setNomeMedicacao(nomeMedicacao);
             setIntervalo(intervalo);
             setDosagem(dose);
             setDurante(durante);
             setObservacoes(observacoes);
-            this.calcularQtdRestantesDoMedicamento();
-            setFlagDeletarMedicamento(false);
-            setAlarmeAtivo(false);
+            setUltimoHorario("");
+            setProximoHorario("");
+            setMedicacaoContinua(medicacaoContinua);
+
+            if(this.getMedicacaoContinua()==0)
+                setQtdRestantesDoMedicamento(calcularQtdRestantesDoMedicamento());
+
+            setAlarmeAtivo(0);
         }
 
 
-        public void calcularQtdRestantesDoMedicamento()
+        public int calcularQtdRestantesDoMedicamento()
         {
-            setQtdRestantesDoMedicamento((this.durante*24)/this.intervalo);
+            int ret = (this.durante*24)/this.intervalo;
+            return ret;
         }
 
         public void decrementarQtdRestantesDoMedicamento()
         {
             this.setQtdRestantesDoMedicamento(this.getQtdRestantesDoMedicamento()-1);
-
-            if(this.getQtdRestantesDoMedicamento()==0)
-                this.setFlagDeletarMedicamento(true);
-
         }
 
         public static ArrayAdapter<Medicamento> buscarMedicacao(Context context)
@@ -55,11 +63,11 @@ public class Medicamento implements Serializable
 
             ArrayAdapter<Medicamento> ret = new ArrayAdapter<Medicamento>(context,android.R.layout.simple_list_item_1);
 
-            Medicamento m1 = new Medicamento("Aurorix",2,100,2,"Sem observações.");
+            Medicamento m1 = new Medicamento("01","Aurorix",2,100,2,"Sem observações.",0);
 
-            Medicamento m2 = new Medicamento("STABLON",8,25,5,"Sem observações.");
+            Medicamento m2 = new Medicamento("02","STABLON",8,25,5,"Sem observações.",1);
 
-            Medicamento m3 = new Medicamento("Tofranil",1,25,7,"Sem observações.");
+            Medicamento m3 = new Medicamento("03","Tofranil",1,25,7,"Sem observações.",0);
 
             ret.add(m1);
             ret.add(m2);
@@ -96,11 +104,11 @@ public class Medicamento implements Serializable
         this.intervalo = intervalo;
     }
 
-    public float getDosagem() {
+    public int getDosagem() {
         return dose;
     }
 
-    public void setDosagem(float dose) {
+    public void setDosagem(int dose) {
         this.dose = dose;
     }
 
@@ -120,19 +128,19 @@ public class Medicamento implements Serializable
         this.observacoes = observacoes;
     }
 
-    public Calendar getUltimoHorario() {
+    public String getUltimoHorario() {
         return ultimoHorario;
     }
 
-    public void setUltimoHorario(Calendar ultimoHorario) {
+    public void setUltimoHorario(String ultimoHorario) {
         this.ultimoHorario = ultimoHorario;
     }
 
-    public Calendar getProximoHorario() {
+    public String getProximoHorario() {
         return proximoHorario;
     }
 
-    public void setProximoHorario(Calendar proximoHorario) {
+    public void setProximoHorario(String proximoHorario) {
         this.proximoHorario = proximoHorario;
     }
 
@@ -144,19 +152,35 @@ public class Medicamento implements Serializable
         this.qtdRestantesDoMedicamento = qtdRestantesDoMedicamento;
     }
 
-    public boolean getFlagDeletarMedicamento() {
-        return flagDeletarMedicamento;
-    }
-
-    public void setFlagDeletarMedicamento(boolean flagDeletarMedicamento) {
-        this.flagDeletarMedicamento = flagDeletarMedicamento;
-    }
-
-    public boolean isAlarmeAtivo() {
-        return alarmeAtivo;
-    }
-
-    public void setAlarmeAtivo(boolean alarmeAtivo) {
+    public void setAlarmeAtivo(int alarmeAtivo) {
         this.alarmeAtivo = alarmeAtivo;
+    }
+
+    public String getIdPaciente() {
+        return idPaciente;
+    }
+
+    public void setIdPaciente(String idPaciente) {
+        this.idPaciente = idPaciente;
+    }
+
+    public String getIdMedicacao() {
+        return idMedicacao;
+    }
+
+    public void setIdMedicacao(String idMedicacao) {
+        this.idMedicacao = idMedicacao;
+    }
+
+    public int getMedicacaoContinua() {
+        return medicacaoContinua;
+    }
+
+    public void setMedicacaoContinua(int medicacaoContinua) {
+        this.medicacaoContinua = medicacaoContinua;
+    }
+
+    public int getAlarmeAtivo() {
+        return alarmeAtivo;
     }
 }

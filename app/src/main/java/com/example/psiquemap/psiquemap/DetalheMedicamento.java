@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import com.example.psiquemap.psiquemap.entidades.Medicamento;
+import com.example.psiquemap.psiquemap.sql.DataBase;
+import com.example.psiquemap.psiquemap.sql.Medicamentos;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -33,9 +37,14 @@ public class DetalheMedicamento extends AppCompatActivity {
     private Button btnConfirmar;
     private Button btnSalvarDetalheMedicamento;
     private Medicamento medicamento;
+    private Medicamento primeiroMedicamentoDaFilaDeAlarmes;
 
     private Calendar ultimoHorario=Calendar.getInstance();
     private TimePickerDialog.OnTimeSetListener t;
+
+    private DataBase dataBase;
+    private SQLiteDatabase conn;
+    private Medicamentos medicamentos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -54,69 +63,92 @@ public class DetalheMedicamento extends AppCompatActivity {
         btnSalvarDetalheMedicamento = (Button)findViewById(R.id.btnSalvarDetalheMedicamento);
         btnConfirmar = (Button)findViewById(R.id.btnConfirmar);
 
-        Bundle bundle = getIntent().getExtras();
-
-        if ((bundle != null) && (bundle.containsKey("MEDICAMENTO")))
+        if(this.conexaoBD())
         {
-            medicamento = (Medicamento) bundle.getSerializable("MEDICAMENTO");
-            preencheDados();
+            medicamentos = new Medicamentos(this.conn);
 
-            if(medicamento.getUltimoHorario()==null)
-                checkBoxAviso.setEnabled(false);
-            else
-                checkBoxAviso.setEnabled(true);
+            Bundle bundle = getIntent().getExtras();
 
-            if(medicamento.isAlarmeAtivo())
-                checkBoxAviso.setChecked(true);
-            else
-                checkBoxAviso.setChecked(false);
+            if ((bundle != null) && (bundle.containsKey("MEDICAMENTO"))) {
+                medicamento = (Medicamento) bundle.getSerializable("MEDICAMENTO");
+                preencheDados();
 
-            checkBoxAviso.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                if (medicamento.getUltimoHorario().equals(""))
+                    checkBoxAviso.setEnabled(false);
+                else
+                    checkBoxAviso.setEnabled(true);
 
-                    if(checkBoxAviso.isChecked())
-                    {
+                if (medicamento.getAlarmeAtivo() == 1)
+                    checkBoxAviso.setChecked(true);
+                else
+                    checkBoxAviso.setChecked(false);
+
+                checkBoxAviso.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if (checkBoxAviso.isChecked()) {
 
 
-                        medicamento.setAlarmeAtivo(true);
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(DetalheMedicamento.this);
-                        dlg.setMessage("Alarme ativado! Você receberá uma notificação às "+dataToString(medicamento.getProximoHorario()));
-                        dlg.setNeutralButton("OK",null);
-                        dlg.show();
+                            medicamento.setAlarmeAtivo(1);
+                            AlertDialog.Builder dlg = new AlertDialog.Builder(DetalheMedicamento.this);
+                            dlg.setMessage("Alarme ativado! Você receberá uma notificação às " + medicamento.getProximoHorario());
+                            dlg.setNeutralButton("OK", null);
+                            dlg.show();
 
-                        chamarAlarme();
+                            chamarAlarme();
 
+                        } else {
+                            medicamento.setAlarmeAtivo(0);
+                            AlertDialog.Builder dlg = new AlertDialog.Builder(DetalheMedicamento.this);
+                            dlg.setMessage("Alarme foi desativado!");
+                            dlg.setNeutralButton("OK", null);
+                            dlg.show();
+
+                            onDestroy();
+                        }
                     }
-                    else
-                    {
-                        medicamento.setAlarmeAtivo(false);
-                        AlertDialog.Builder dlg = new AlertDialog.Builder(DetalheMedicamento.this);
-                        dlg.setMessage("Alarme foi desativado!");
-                        dlg.setNeutralButton("OK",null);
-                        dlg.show();
-
-                        onDestroy();
-                    }
-                }
-            });
+                });
+            }
+            else
+                finish();
         }
         else
-            finish();
+        {
+            android.app.AlertDialog.Builder dlg = new android.app.AlertDialog.Builder(this);
+            dlg.setMessage("Erro ao conectar com banco!");
+            dlg.setNeutralButton("OK", null);
+            dlg.show();
+        }
+
+    }
+
+    private boolean conexaoBD()
+    {
+        try {
+
+            dataBase = new DataBase(this);
+            conn = dataBase.getWritableDatabase();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
 
     }
 
     public void chamarAlarme()
     {
-            Log.i("Script", "Novo alarme");
 
             Intent intent = new Intent("DISPARAR_ALARME");
-            intent.putExtra("MEDICAMENTO", medicamento);
+            intent.putExtra("MEDICAMENTO", this.primeiroMedicamentoDaFilaDeAlarmes);
             PendingIntent p = PendingIntent.getBroadcast(this, 0, intent, 0);
 
             AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-            alarme.set(AlarmManager.RTC_WAKEUP,medicamento.getProximoHorario().getTimeInMillis(),p);
+            alarme.set(AlarmManager.RTC_WAKEUP,MetodosEmComum.stringToCalendar(this.primeiroMedicamentoDaFilaDeAlarmes.getProximoHorario()).getTimeInMillis(),p);
     }
 
     public void onDestroy()
@@ -134,7 +166,11 @@ public class DetalheMedicamento extends AppCompatActivity {
         txtNomeMedicamento.setText("Medicamento: "+medicamento.getNomeMedicacao());
         txtIntervalo.setText("Tomar a cada: "+medicamento.getIntervalo()+" hora(s)");
         txtDosagem.setText("Dosagem: "+medicamento.getDosagem()+"mg");
-        txtDurante.setText("Durante: "+medicamento.getDurante()+" dia(s)");
+
+        if(this.medicamento.getMedicacaoContinua()==1)
+            txtDurante.setText("Durante: Medicação contínua.");
+        else
+            txtDurante.setText("Durante: "+medicamento.getDurante()+" dia(s)");
     }
 
     public void exibeHoraUltimoHorario(View view)
@@ -157,8 +193,9 @@ public class DetalheMedicamento extends AppCompatActivity {
 
     private void updateUltimoHorario(Calendar calendar)
     {
-        editUltimoHorario.setText(dataToString(calendar));
-        medicamento.setUltimoHorario(calendar);
+        editUltimoHorario.setText(MetodosEmComum.horaToString(calendar));
+        medicamento.setUltimoHorario(MetodosEmComum.horaToString(calendar));
+        medicamentos.update(this.medicamento);
     }
 
     public void btnConfirmar(View view)
@@ -166,12 +203,14 @@ public class DetalheMedicamento extends AppCompatActivity {
         updateProximoHorario();
         medicamento.decrementarQtdRestantesDoMedicamento();
 
-        if (medicamento.getFlagDeletarMedicamento())
+        if (medicamento.getQtdRestantesDoMedicamento()==0)
         {
             AlertDialog.Builder dlg = new AlertDialog.Builder(this);
             dlg.setMessage("Todas as doses foram tomadas! O medicamento será excluído da lista.");
             dlg.setNeutralButton("OK", null);
             dlg.show();
+
+            medicamentos.delete(medicamento.getIdPaciente(),medicamento.getIdMedicacao());
         }
 
         btnConfirmar.setEnabled(false);
@@ -181,31 +220,20 @@ public class DetalheMedicamento extends AppCompatActivity {
             chamarAlarme();
     }
 
+    private void updateProximoHorario()
+    {
+        Calendar proximoHorario = MetodosEmComum.stringToCalendar(medicamento.getUltimoHorario());
+        proximoHorario.add(Calendar.HOUR_OF_DAY,medicamento.getIntervalo());
+
+        medicamento.setProximoHorario(MetodosEmComum.horaToString(proximoHorario));
+
+        txtProximoHorario.setText(medicamento.getProximoHorario()+" horas.");
+    }
+
     public void btnSalvarDetalheMedicamento(View view)
     {
         Intent it = new Intent(this, MainActivity.class);
         startActivityForResult(it,0);
-    }
-
-    private void updateProximoHorario()
-    {
-        Calendar proximoHorario = medicamento.getUltimoHorario();
-        proximoHorario.add(Calendar.HOUR_OF_DAY,medicamento.getIntervalo());
-
-        medicamento.setProximoHorario(proximoHorario);
-
-        txtProximoHorario.setText(dataToString(medicamento.getProximoHorario())+" horas.");
-        Log.i("proximo horario ",dataToString(medicamento.getProximoHorario()));
-    }
-
-    public String dataToString(Calendar calendar)
-    {
-        Date hora = calendar.getTime();
-
-        DateFormat data = new SimpleDateFormat("HH:mm");
-        String str = data.format(hora);
-
-        return str;
     }
 
 }

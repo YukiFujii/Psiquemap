@@ -11,10 +11,12 @@
 
     import com.example.psiquemap.psiquemap.entidades.Paciente;
     import com.example.psiquemap.psiquemap.entidades.PerguntaDoQuestionario;
+    import com.example.psiquemap.psiquemap.entidades.Sintoma;
     import com.example.psiquemap.psiquemap.sql.DataBase;
     import com.example.psiquemap.psiquemap.sql.Pacientes;
     import com.example.psiquemap.psiquemap.sql.PerguntasDoDiario;
     import com.example.psiquemap.psiquemap.sql.PerguntasDoQuestionarioMINI;
+    import com.example.psiquemap.psiquemap.sql.Sintomas;
 
     import java.util.ArrayList;
 
@@ -110,6 +112,7 @@
                      pacientes.insert(paciente);
                      this.inserirPerguntasNoDiario();
                      this.inserirPerguntasNoQuestionarioMINI();
+                     this.inserirSintomas();
                      break;
 
                  case "ronaldo@gmail.com":
@@ -120,6 +123,7 @@
                      pacientes.insert(paciente2);
                      this.inserirPerguntasNoDiario();
                      this.inserirPerguntasNoQuestionarioMINI();
+                     this.inserirSintomas();
                      break;
 
                  default:
@@ -181,6 +185,26 @@
          perguntasDoQuestionarioMINI.insertPerguntaDoQuestionarioMINI(questao2);
          perguntasDoQuestionarioMINI.insertPerguntaDoQuestionarioMINI(questao3);
          perguntasDoQuestionarioMINI.insertPerguntaDoQuestionarioMINI(questao4);
+
+     }
+
+     private void inserirSintomas()
+     {
+         Sintomas sintomas = new Sintomas(conn);
+
+         Sintoma sintoma1 = new Sintoma("01","123","Angustia");
+         Sintoma sintoma2 = new Sintoma("01","136","Ansiedade");
+         Sintoma sintoma3 = new Sintoma("01","158","Medo");
+         Sintoma sintoma4 = new Sintoma("02","865","Dor de Cabeça");
+         Sintoma sintoma5 = new Sintoma("02","478","Ansia");
+         Sintoma sintoma6 = new Sintoma("01","324","Estresse");
+
+         sintomas.insert(sintoma1);
+         sintomas.insert(sintoma2);
+         sintomas.insert(sintoma3);
+         sintomas.insert(sintoma4);
+         sintomas.insert(sintoma5);
+         sintomas.insert(sintoma6);
 
      }
 

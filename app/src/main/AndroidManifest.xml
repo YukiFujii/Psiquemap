@@ -46,7 +46,7 @@
             android:label="@string/title_activity_minha_conta"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Sintomas"
+            android:name=".SintomasScreen"
             android:label="@string/title_activity_sintomas"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -70,7 +70,7 @@
             android:label="@string/title_activity_resposta_time"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Medicacao"
+            android:name=".MedicamentosScreen"
             android:label="@string/title_activity_medicacao"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -90,7 +90,7 @@
         </receiver>
 
         <activity
-            android:name=".Feedback"
+            android:name=".FeedbackScreen"
             android:label="@string/title_activity_feedback"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

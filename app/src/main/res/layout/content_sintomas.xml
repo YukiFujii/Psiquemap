@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.psiquemap.psiquemap.Sintomas"
+    tools:context="com.example.psiquemap.psiquemap.SintomasScreen"
     tools:showIn="@layout/activity_sintomas">
 
     <LinearLayout
@@ -77,20 +77,5 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2.8"
-        android:id="@+id/linearLayout" >
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Salvar"
-            android:id="@+id/btnSalvar"
-            android:onClick="salvarSintomas"/>
-
-    </LinearLayout>
 
 </LinearLayout>
