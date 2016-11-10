@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import com.example.psiquemap.psiquemap.entidades.Medicamento;
@@ -85,14 +86,14 @@ public class Medicamentos
                 medicamento.setIdMedicacao(cursor.getString(cursor.getColumnIndex("_id_MEDICACAO")));
                 medicamento.setNomeMedicacao(cursor.getString(cursor.getColumnIndex("NOME_MEDICACAO")));
                 medicamento.setIntervalo(cursor.getInt(cursor.getColumnIndex("INTERVALO")));
-                medicamento.setIntervalo(cursor.getInt(cursor.getColumnIndex("DOSE")));
-                medicamento.setIntervalo(cursor.getInt(cursor.getColumnIndex("DURANTE")));
-                medicamento.setIdPaciente(cursor.getString(cursor.getColumnIndex("OBSERVACOES")));
-                medicamento.setIdPaciente(cursor.getString(cursor.getColumnIndex("ULTIMO_HORARIO")));
-                medicamento.setIdPaciente(cursor.getString(cursor.getColumnIndex("PROXIMO_HORARIO")));
-                medicamento.setIntervalo(cursor.getInt(cursor.getColumnIndex("MEDICACAO_CONTINUA")));
-                medicamento.setIntervalo(cursor.getInt(cursor.getColumnIndex("QTD_REST_MEDICAMENTO")));
-                medicamento.setIntervalo(cursor.getInt(cursor.getColumnIndex("ALARME_ATIVO")));
+                medicamento.setDosagem(cursor.getInt(cursor.getColumnIndex("DOSE")));
+                medicamento.setDurante(cursor.getInt(cursor.getColumnIndex("DURANTE")));
+                medicamento.setObservacoes(cursor.getString(cursor.getColumnIndex("OBSERVACOES")));
+                medicamento.setUltimoHorario(cursor.getString(cursor.getColumnIndex("ULTIMO_HORARIO")));
+                medicamento.setProximoHorario(cursor.getString(cursor.getColumnIndex("PROXIMO_HORARIO")));
+                medicamento.setMedicacaoContinua(cursor.getInt(cursor.getColumnIndex("MEDICACAO_CONTINUA")));
+                medicamento.setQtdRestantesDoMedicamento(cursor.getInt(cursor.getColumnIndex("QTD_REST_MEDICAMENTO")));
+                medicamento.setAlarmeAtivo(cursor.getInt(cursor.getColumnIndex("ALARME_ATIVO")));
 
                 todosMedicamentos.add(medicamento);
 
@@ -100,6 +101,35 @@ public class Medicamentos
         }
 
         return todosMedicamentos;
+    }
+
+    public Medicamento getMedicamento(String idPaciente,String idMedicacao)
+    {
+        Medicamento medicamento = null;
+
+        Cursor cursor = conn.query("MEDICAMENTOS",null,"_id_PACIENTE = ? AND _id_MEDICACAO = ?",new String[]{idPaciente,idMedicacao},null,null,null);
+
+        Log.i("Medicamento encontrado",""+cursor.getCount());
+        cursor.moveToFirst();
+
+        if(cursor.getCount()>0)
+        {
+                medicamento = new Medicamento();
+                medicamento.setIdPaciente(cursor.getString(cursor.getColumnIndex("_id_PACIENTE")));
+                medicamento.setIdMedicacao(cursor.getString(cursor.getColumnIndex("_id_MEDICACAO")));
+                medicamento.setNomeMedicacao(cursor.getString(cursor.getColumnIndex("NOME_MEDICACAO")));
+                medicamento.setIntervalo(cursor.getInt(cursor.getColumnIndex("INTERVALO")));
+                medicamento.setDosagem(cursor.getInt(cursor.getColumnIndex("DOSE")));
+                medicamento.setDurante(cursor.getInt(cursor.getColumnIndex("DURANTE")));
+                medicamento.setObservacoes(cursor.getString(cursor.getColumnIndex("OBSERVACOES")));
+                medicamento.setUltimoHorario(cursor.getString(cursor.getColumnIndex("ULTIMO_HORARIO")));
+                medicamento.setProximoHorario(cursor.getString(cursor.getColumnIndex("PROXIMO_HORARIO")));
+                medicamento.setMedicacaoContinua(cursor.getInt(cursor.getColumnIndex("MEDICACAO_CONTINUA")));
+                medicamento.setQtdRestantesDoMedicamento(cursor.getInt(cursor.getColumnIndex("QTD_REST_MEDICAMENTO")));
+                medicamento.setAlarmeAtivo(cursor.getInt(cursor.getColumnIndex("ALARME_ATIVO")));
+        }
+
+        return medicamento;
     }
 
     public boolean deletarMedicamento(Medicamento medicamento)

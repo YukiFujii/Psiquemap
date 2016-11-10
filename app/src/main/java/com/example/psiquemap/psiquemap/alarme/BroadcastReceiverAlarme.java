@@ -27,8 +27,6 @@ public class BroadcastReceiverAlarme extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        Log.i("Script", "-> Alarme");
-
         Bundle bundle = intent.getExtras();
 
         Medicamento medicamento = (Medicamento) bundle.get("MEDICAMENTO");

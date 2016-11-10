@@ -1,18 +1,22 @@
  package com.example.psiquemap.psiquemap;
 
+    import android.content.Context;
     import android.content.Intent;
     import android.database.sqlite.SQLiteDatabase;
     import android.support.v7.app.AlertDialog;
     import android.support.v7.app.AppCompatActivity;
     import android.os.Bundle;
     import android.view.View;
+    import android.widget.ArrayAdapter;
     import android.widget.Button;
     import android.widget.EditText;
 
+    import com.example.psiquemap.psiquemap.entidades.Medicamento;
     import com.example.psiquemap.psiquemap.entidades.Paciente;
     import com.example.psiquemap.psiquemap.entidades.PerguntaDoQuestionario;
     import com.example.psiquemap.psiquemap.entidades.Sintoma;
     import com.example.psiquemap.psiquemap.sql.DataBase;
+    import com.example.psiquemap.psiquemap.sql.Medicamentos;
     import com.example.psiquemap.psiquemap.sql.Pacientes;
     import com.example.psiquemap.psiquemap.sql.PerguntasDoDiario;
     import com.example.psiquemap.psiquemap.sql.PerguntasDoQuestionarioMINI;
@@ -113,6 +117,7 @@
                      this.inserirPerguntasNoDiario();
                      this.inserirPerguntasNoQuestionarioMINI();
                      this.inserirSintomas();
+                     this.inserirMedicacao();
                      break;
 
                  case "ronaldo@gmail.com":
@@ -124,6 +129,7 @@
                      this.inserirPerguntasNoDiario();
                      this.inserirPerguntasNoQuestionarioMINI();
                      this.inserirSintomas();
+                     this.inserirMedicacao();
                      break;
 
                  default:
@@ -205,6 +211,23 @@
          sintomas.insert(sintoma4);
          sintomas.insert(sintoma5);
          sintomas.insert(sintoma6);
+
+     }
+
+     private void inserirMedicacao()
+     {
+
+         Medicamentos medicamentos = new Medicamentos(this.conn);
+
+         Medicamento m1 = new Medicamento("01","Aurorix",2,100,2,"Sem observações.",0);
+
+         Medicamento m2 = new Medicamento("02","STABLON",8,25,5,"Sem observações.",1);
+
+         Medicamento m3 = new Medicamento("03","Tofranil",1,25,7,"Sem observações.",0);
+
+         medicamentos.insert(m1);
+         medicamentos.insert(m2);
+         medicamentos.insert(m3);
 
      }
 

@@ -58,25 +58,6 @@ public class Medicamento implements Serializable
             this.setQtdRestantesDoMedicamento(this.getQtdRestantesDoMedicamento()-1);
         }
 
-        public static ArrayAdapter<Medicamento> buscarMedicacao(Context context)
-        {
-
-            ArrayAdapter<Medicamento> ret = new ArrayAdapter<Medicamento>(context,android.R.layout.simple_list_item_1);
-
-            Medicamento m1 = new Medicamento("01","Aurorix",2,100,2,"Sem observações.",0);
-
-            Medicamento m2 = new Medicamento("02","STABLON",8,25,5,"Sem observações.",1);
-
-            Medicamento m3 = new Medicamento("03","Tofranil",1,25,7,"Sem observações.",0);
-
-            ret.add(m1);
-            ret.add(m2);
-            ret.add(m3);
-
-            return ret;
-        }
-
-
 
     public String toString()
     {

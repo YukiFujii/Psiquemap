@@ -147,4 +147,20 @@ public class ScriptSQL {
         return sqlBuilder.toString();
     }
 
+    public static String getProxAlarme()
+    {
+        StringBuilder sqlBuilder = new StringBuilder();
+
+        sqlBuilder.append("CREATE TABLE IF NOT EXISTS PROXIMO_ALARME(               ");
+        sqlBuilder.append("_id_PACIENTE                              VARCHAR (15) , ");
+        sqlBuilder.append("_id_MEDICACAO                             VARCHAR (15) , ");
+        sqlBuilder.append("TEMPO_RESTANTE                            VARCHAR (5) , ");
+        sqlBuilder.append("E_O_PROXIMO                                    INTEGER , ");
+        sqlBuilder.append("PRIMARY KEY                  (_id_PACIENTE,_id_MEDICACAO)");
+        sqlBuilder.append(");");
+
+        return sqlBuilder.toString();
+
+    }
+
 }

@@ -16,7 +16,10 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import com.example.psiquemap.psiquemap.entidades.Alarme;
 import com.example.psiquemap.psiquemap.entidades.Medicamento;
+import com.example.psiquemap.psiquemap.sql.Alarmes;
 import com.example.psiquemap.psiquemap.sql.DataBase;
 import com.example.psiquemap.psiquemap.sql.Medicamentos;
 
@@ -45,6 +48,7 @@ public class DetalheMedicamento extends AppCompatActivity {
     private DataBase dataBase;
     private SQLiteDatabase conn;
     private Medicamentos medicamentos;
+    private Alarmes alarmes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -66,11 +70,13 @@ public class DetalheMedicamento extends AppCompatActivity {
         if(this.conexaoBD())
         {
             medicamentos = new Medicamentos(this.conn);
+            alarmes = new Alarmes(conn);
 
             Bundle bundle = getIntent().getExtras();
 
-            if ((bundle != null) && (bundle.containsKey("MEDICAMENTO"))) {
-                medicamento = (Medicamento) bundle.getSerializable("MEDICAMENTO");
+            if ((bundle != null) && (bundle.containsKey("MEDICAMENTO")))
+            {
+                this.medicamento = (Medicamento) bundle.getSerializable("MEDICAMENTO");
                 preencheDados();
 
                 if (medicamento.getUltimoHorario().equals(""))
@@ -87,25 +93,40 @@ public class DetalheMedicamento extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
-                        if (checkBoxAviso.isChecked()) {
+                        if (checkBoxAviso.isChecked())
+                        {
+                            Alarme alarme = new Alarme(medicamento.getIdPaciente(),medicamento.getIdMedicacao(),medicamento.getProximoHorario());
+                            alarmes.insert(alarme);
+                            alarme = alarmes.pegarProximoAlarme();
+                            primeiroMedicamentoDaFilaDeAlarmes = medicamentos.getMedicamento(alarme.getIdPaciente(),alarme.getIdMedicacao());
+                            alarmes.delete(primeiroMedicamentoDaFilaDeAlarmes.getIdPaciente(),primeiroMedicamentoDaFilaDeAlarmes.getIdMedicacao());
 
-
-                            medicamento.setAlarmeAtivo(1);
                             AlertDialog.Builder dlg = new AlertDialog.Builder(DetalheMedicamento.this);
-                            dlg.setMessage("Alarme ativado! Você receberá uma notificação às " + medicamento.getProximoHorario());
+                            dlg.setMessage("Alarme ativado! Você receberá uma notificação às " + primeiroMedicamentoDaFilaDeAlarmes.getProximoHorario());
                             dlg.setNeutralButton("OK", null);
                             dlg.show();
 
-                            chamarAlarme();
+                            teste();
+
+                            //chamarAlarme();*/
 
                         } else {
-                            medicamento.setAlarmeAtivo(0);
+
                             AlertDialog.Builder dlg = new AlertDialog.Builder(DetalheMedicamento.this);
                             dlg.setMessage("Alarme foi desativado!");
                             dlg.setNeutralButton("OK", null);
                             dlg.show();
 
-                            onDestroy();
+                            alarmes.delete(medicamento.getIdPaciente(),medicamento.getIdMedicacao());
+
+                            if(alarmes.pegarProximoAlarme()==null)
+                                onDestroy();
+                            else
+                            {
+                                Alarme proxAlarme = alarmes.pegarProximoAlarme();
+                                primeiroMedicamentoDaFilaDeAlarmes = medicamentos.getMedicamento(proxAlarme.getIdPaciente(),proxAlarme.getIdMedicacao());
+                                chamarAlarme();
+                            }
                         }
                     }
                 });
@@ -139,16 +160,34 @@ public class DetalheMedicamento extends AppCompatActivity {
 
     }
 
+    public void teste()
+    {
+        Intent intent = new Intent("DISPARAR_ALARME");
+        intent.putExtra("MEDICAMENTO", this.primeiroMedicamentoDaFilaDeAlarmes);
+        PendingIntent p = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        Log.i("Valor de ProxHorario",this.primeiroMedicamentoDaFilaDeAlarmes.getProximoHorario());
+        Calendar c = MetodosEmComum.stringToCalendar(this.primeiroMedicamentoDaFilaDeAlarmes.getProximoHorario());
+
+        Log.i("Valor gTM c",c.getTimeInMillis()+"");
+        Calendar calendar = Calendar.getInstance();
+        Log.i("Valor gTM atual",calendar.getTimeInMillis()+"");
+        calendar.add(Calendar.SECOND, 15);
+        Log.i("Valor gTM deps 15",""+c.getTimeInMillis());
+
+        AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarme.set(AlarmManager.RTC_WAKEUP,c.getTimeInMillis(),p);
+    }
+
     public void chamarAlarme()
     {
+        Intent intent = new Intent("DISPARAR_ALARME");
+        intent.putExtra("MEDICAMENTO", this.medicamento);
+        PendingIntent p = PendingIntent.getBroadcast(this, 0, intent, 0);
 
-            Intent intent = new Intent("DISPARAR_ALARME");
-            intent.putExtra("MEDICAMENTO", this.primeiroMedicamentoDaFilaDeAlarmes);
-            PendingIntent p = PendingIntent.getBroadcast(this, 0, intent, 0);
+        AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarme.set(AlarmManager.RTC_WAKEUP,MetodosEmComum.stringToCalendar(medicamento.getProximoHorario()).getTimeInMillis(),p);
 
-            AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-            alarme.set(AlarmManager.RTC_WAKEUP,MetodosEmComum.stringToCalendar(this.primeiroMedicamentoDaFilaDeAlarmes.getProximoHorario()).getTimeInMillis(),p);
     }
 
     public void onDestroy()
@@ -168,7 +207,7 @@ public class DetalheMedicamento extends AppCompatActivity {
         txtDosagem.setText("Dosagem: "+medicamento.getDosagem()+"mg");
 
         if(this.medicamento.getMedicacaoContinua()==1)
-            txtDurante.setText("Durante: Medicação contínua.");
+            txtDurante.setText("Medicação contínua");
         else
             txtDurante.setText("Durante: "+medicamento.getDurante()+" dia(s)");
     }
@@ -201,23 +240,25 @@ public class DetalheMedicamento extends AppCompatActivity {
     public void btnConfirmar(View view)
     {
         updateProximoHorario();
-        medicamento.decrementarQtdRestantesDoMedicamento();
 
-        if (medicamento.getQtdRestantesDoMedicamento()==0)
+        if (medicamento.getMedicacaoContinua()==0)
         {
-            AlertDialog.Builder dlg = new AlertDialog.Builder(this);
-            dlg.setMessage("Todas as doses foram tomadas! O medicamento será excluído da lista.");
-            dlg.setNeutralButton("OK", null);
-            dlg.show();
+            medicamento.decrementarQtdRestantesDoMedicamento();
 
-            medicamentos.delete(medicamento.getIdPaciente(),medicamento.getIdMedicacao());
+            if (medicamento.getQtdRestantesDoMedicamento()==0)
+            {
+                AlertDialog.Builder dlg = new AlertDialog.Builder(this);
+                dlg.setMessage("Todas as doses foram tomadas! O medicamento será excluído da lista.");
+                dlg.setNeutralButton("OK", null);
+                dlg.show();
+
+                medicamentos.delete(medicamento.getIdPaciente(), medicamento.getIdMedicacao());
+            }
         }
 
         btnConfirmar.setEnabled(false);
         checkBoxAviso.setEnabled(true);
 
-        if(checkBoxAviso.isChecked())
-            chamarAlarme();
     }
 
     private void updateProximoHorario()
@@ -226,6 +267,7 @@ public class DetalheMedicamento extends AppCompatActivity {
         proximoHorario.add(Calendar.HOUR_OF_DAY,medicamento.getIntervalo());
 
         medicamento.setProximoHorario(MetodosEmComum.horaToString(proximoHorario));
+        medicamentos.update(medicamento);
 
         txtProximoHorario.setText(medicamento.getProximoHorario()+" horas.");
     }

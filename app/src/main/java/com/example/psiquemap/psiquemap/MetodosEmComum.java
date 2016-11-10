@@ -1,5 +1,7 @@
 package com.example.psiquemap.psiquemap;
 
+import android.util.Log;
+
 import com.example.psiquemap.psiquemap.sql.DataBase;
 
 import java.text.DateFormat;
@@ -56,12 +58,16 @@ public final class MetodosEmComum
         DateFormat data = new SimpleDateFormat("HH:mm");
         try {
              hora = data.parse(horas);
+            Log.i("Conversão to date","sucess");
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(hora);
+        calendar.set(Calendar.MINUTE,hora.getMinutes());
+        calendar.set(Calendar.HOUR_OF_DAY,hora.getHours());
+
+        Log.i("Calender com hora",MetodosEmComum.horaToString(calendar));
 
         return calendar;
     }
