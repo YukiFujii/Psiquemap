@@ -46,6 +46,21 @@ public class ScriptSQL {
         return sqlBuilder.toString();
     }
 
+    public static String getRespostasDoQuestionarioDiario()
+    {
+        StringBuilder sqlBuilder = new StringBuilder();
+
+        sqlBuilder.append("CREATE TABLE IF NOT EXISTS RESPOSTAS_DO_QUESTIONARIO_DIARIO ( ");
+        sqlBuilder.append("_id_PACIENTE                                 VARCHAR (15) , ");
+        sqlBuilder.append("DATA                                         VARCHAR (10) , ");
+        sqlBuilder.append("_id_PERGUNTA                                   VARCHAR (3) , ");
+        sqlBuilder.append("RESPOSTA                                     VARCHAR (10) , ");
+        sqlBuilder.append("PRIMARY KEY                     (_id_PACIENTE,DATA,QUESTAO) ");
+        sqlBuilder.append("                                                          );");
+
+        return sqlBuilder.toString();
+    }
+
     public static String getPerguntasDoQuestionarioMINI()
     {
         StringBuilder sqlBuilder = new StringBuilder();
@@ -59,6 +74,22 @@ public class ScriptSQL {
         sqlBuilder.append("FOI_RESPONDIDA                    INTEGER , ");
         sqlBuilder.append("PRIMARY KEY                    (_id,QUESTAO)");
         sqlBuilder.append(");");
+
+        return sqlBuilder.toString();
+    }
+
+    public static String getRespostasDoQuestionarioMINI()
+    {
+        StringBuilder sqlBuilder = new StringBuilder();
+
+        sqlBuilder.append("CREATE TABLE IF NOT EXISTS RESPOSTAS_DO_QUESTIONARIO_MINI ( ");
+        sqlBuilder.append("_id_PACIENTE                                 VARCHAR (15) , ");
+        sqlBuilder.append("DATA                                         VARCHAR (10) , ");
+        sqlBuilder.append("_id_MODULO                                    VARCHAR (1) , ");
+        sqlBuilder.append("QUESTAO                                       VARCHAR (3) , ");
+        sqlBuilder.append("RESPOSTA                                     VARCHAR (10) , ");
+        sqlBuilder.append("PRIMARY KEY          (_id_PACIENTE,DATA,_id_MODULO,QUESTAO) ");
+        sqlBuilder.append("                                                          );");
 
         return sqlBuilder.toString();
     }
@@ -140,7 +171,6 @@ public class ScriptSQL {
         sqlBuilder.append("PROXIMO_HORARIO                            VARCHAR (5) , ");
         sqlBuilder.append("MEDICACAO_CONTINUA                             INTEGER , ");
         sqlBuilder.append("QTD_REST_MEDICAMENTO                           INTEGER , ");
-        sqlBuilder.append("ALARME_ATIVO                                   INTEGER , ");
         sqlBuilder.append("PRIMARY KEY                  (_id_PACIENTE,_id_MEDICACAO)");
         sqlBuilder.append(");");
 

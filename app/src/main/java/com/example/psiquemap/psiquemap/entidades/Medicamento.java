@@ -23,7 +23,6 @@ public class Medicamento implements Serializable
         private String proximoHorario;
         private int medicacaoContinua;
         private int qtdRestantesDoMedicamento;
-        private int alarmeAtivo;
 
         public Medicamento(){}
 
@@ -42,8 +41,6 @@ public class Medicamento implements Serializable
 
             if(this.getMedicacaoContinua()==0)
                 setQtdRestantesDoMedicamento(calcularQtdRestantesDoMedicamento());
-
-            setAlarmeAtivo(0);
         }
 
 
@@ -122,9 +119,6 @@ public class Medicamento implements Serializable
         this.qtdRestantesDoMedicamento = qtdRestantesDoMedicamento;
     }
 
-    public void setAlarmeAtivo(int alarmeAtivo) {
-        this.alarmeAtivo = alarmeAtivo;
-    }
 
     public String getIdPaciente() {
         return idPaciente;
@@ -150,9 +144,6 @@ public class Medicamento implements Serializable
         this.medicacaoContinua = medicacaoContinua;
     }
 
-    public int getAlarmeAtivo() {
-        return alarmeAtivo;
-    }
 
     public String toString()
     {

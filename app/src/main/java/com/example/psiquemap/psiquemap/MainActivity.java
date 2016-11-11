@@ -1,13 +1,20 @@
 package com.example.psiquemap.psiquemap;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.example.psiquemap.psiquemap.sql.DataBase;
+import com.example.psiquemap.psiquemap.sql.PerguntasDoQuestionarioMINI;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -24,6 +31,10 @@ public class MainActivity extends AppCompatActivity
     private TextView txtSintomas;
     private TextView txtFeedback;
     private TextView txtNotificacoes;
+
+    private DataBase dataBase;
+    private SQLiteDatabase conn;
+    private PerguntasDoQuestionarioMINI perguntasDoQuestionarioMINI;
 
 
     @Override
@@ -44,6 +55,47 @@ public class MainActivity extends AppCompatActivity
         txtSintomas = (TextView) findViewById(R.id.txtSintomas);
         txtFeedback = (TextView) findViewById(R.id.txtFeedback);
         txtNotificacoes = (TextView) findViewById(R.id.txtNotificacoes);
+
+        if(this.conexaoBD())
+        {
+            perguntasDoQuestionarioMINI = new PerguntasDoQuestionarioMINI(this.conn);
+            Log.i("Perguntas restantes",""+perguntasDoQuestionarioMINI.getPerguntasRestantes());
+            if(perguntasDoQuestionarioMINI.getPerguntasRestantes()==0)
+            {
+                txtQuestionario.setEnabled(false);
+                txtQuestionario.setTextColor(Color.GRAY);
+                btnQuestionario.setEnabled(false);
+            }
+            else
+            {
+                txtQuestionario.setEnabled(true);
+                txtQuestionario.setTextColor(Color.BLACK);
+                btnQuestionario.setEnabled(true);
+            }
+        }
+        else
+        {
+            android.app.AlertDialog.Builder dlg = new android.app.AlertDialog.Builder(this);
+            dlg.setMessage("Erro ao conectar com banco!");
+            dlg.setNeutralButton("OK", null);
+            dlg.show();
+        }
+
+    }
+
+    private boolean conexaoBD()
+    {
+        try {
+
+            dataBase = new DataBase(this);
+            conn = dataBase.getWritableDatabase();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
 
     }
 
@@ -81,6 +133,36 @@ public class MainActivity extends AppCompatActivity
     {
         Intent it = new Intent(this, FeedbackScreen.class);
         startActivityForResult(it, 0);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+
+        if(this.conexaoBD())
+        {
+            perguntasDoQuestionarioMINI = new PerguntasDoQuestionarioMINI(this.conn);
+            Log.i("Perguntas restantes",""+perguntasDoQuestionarioMINI.getPerguntasRestantes());
+            if(perguntasDoQuestionarioMINI.getPerguntasRestantes()==0)
+            {
+                txtQuestionario.setEnabled(false);
+                txtQuestionario.setTextColor(Color.GRAY);
+                btnQuestionario.setEnabled(false);
+            }
+            else
+            {
+                txtQuestionario.setEnabled(true);
+                txtQuestionario.setTextColor(Color.BLACK);
+                btnQuestionario.setEnabled(true);
+            }
+        }
+        else
+        {
+            android.app.AlertDialog.Builder dlg = new android.app.AlertDialog.Builder(this);
+            dlg.setMessage("Erro ao conectar com banco!");
+            dlg.setNeutralButton("OK", null);
+            dlg.show();
+        }
+
     }
 
 

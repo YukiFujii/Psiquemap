@@ -42,10 +42,6 @@ public class InicioQuestionario extends AppCompatActivity
 
             txtAviso1.setText("- O questionário possui " + perguntasDoQuestionarioMINI.getPerguntasRestantes() + " pergunta(s) não respondida(s).");
 
-            if (perguntasDoQuestionarioMINI.getPerguntasRestantes() != 0)
-                btnComecar.setEnabled(true);
-            else
-                btnComecar.setEnabled(false);
         }
         else
         {

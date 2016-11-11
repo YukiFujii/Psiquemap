@@ -64,7 +64,7 @@ public class RespostaNull extends AppCompatActivity {
             if(getTipoQuestionario().equals("Questionário"))
             {
                 this.perguntasDoQuestionarioMINI = new PerguntasDoQuestionarioMINI(conn);
-                txtMarcadorRespNull.setText(this.perguntasDoQuestionarioMINI.getIndexPerguntasAtual() + "/" + this.perguntasDoQuestionarioMINI.getTotalPerguntas());
+                txtMarcadorRespNull.setText("");
                 txtPerguntaRespNull.setText(this.pergunta.getPergunta());
             }
             else
@@ -105,17 +105,13 @@ public class RespostaNull extends AppCompatActivity {
             if (this.tipoQuestionario.equals("Questionário"))
             {
 
-                this.pergunta.setFoiRespondida(1);
-                this.perguntasDoQuestionarioMINI.update(this.pergunta);
+                this.perguntasDoQuestionarioMINI.delete(pergunta.getPerguntaId(),pergunta.getQuestao());
 
                 this.pergunta = this.perguntasDoQuestionarioMINI.getPerguntaQuestionarioMINI();
 
                 if(this.pergunta==null)
-                {
-                    Intent it = new Intent(this, InicioQuestionario.class);
-                    startActivityForResult(it, 0);
                     finish();
-                }
+
                 else
                 {
 

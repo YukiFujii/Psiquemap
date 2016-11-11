@@ -81,4 +81,10 @@ public class PerguntaDoQuestionario implements Serializable
     public void setFoiRespondida(int foiRespondida) {
         this.foiRespondida = foiRespondida;
     }
+
+    public String toString()
+    {
+        String ret = getPerguntaId()+" - "+getQuestao()+" - "+getTipoPergunta();
+        return ret;
+    }
 }

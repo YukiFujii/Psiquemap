@@ -84,17 +84,13 @@ public class DetalheMedicamento extends AppCompatActivity {
 
                 preencheDados();
 
-                if (medicamento.getUltimoHorario().equals(""))
+                if (this.txtProximoHorario.getText().toString().equals(""))
                     checkBoxAviso.setEnabled(false);
                 else
                     checkBoxAviso.setEnabled(true);
 
-                if (medicamento.getAlarmeAtivo() == 1)
-                    checkBoxAviso.setChecked(true);
-                else
-                    checkBoxAviso.setChecked(false);
-
-                checkBoxAviso.setOnClickListener(new View.OnClickListener() {
+                checkBoxAviso.setOnClickListener(new View.OnClickListener()
+                {
                     @Override
                     public void onClick(View v) {
 
@@ -110,7 +106,7 @@ public class DetalheMedicamento extends AppCompatActivity {
                                 primeiroMedicamentoDaFilaDeAlarmes = medicamentos.getMedicamento(alarme.getIdPaciente(), alarme.getIdMedicacao());
 
                                 AlertDialog.Builder dlg = new AlertDialog.Builder(DetalheMedicamento.this);
-                                dlg.setMessage("Alarme ativado! Você receberá uma notificação às " + primeiroMedicamentoDaFilaDeAlarmes.getProximoHorario());
+                                dlg.setMessage("O alarme foi ativado!");
                                 dlg.setNeutralButton("OK", null);
                                 dlg.show();
 
@@ -124,7 +120,9 @@ public class DetalheMedicamento extends AppCompatActivity {
                                 dlg.show();
                             }
 
-                        } else {
+                        }
+                        else
+                        {
 
                             AlertDialog.Builder dlg = new AlertDialog.Builder(DetalheMedicamento.this);
                             dlg.setMessage("Alarme foi desativado!");

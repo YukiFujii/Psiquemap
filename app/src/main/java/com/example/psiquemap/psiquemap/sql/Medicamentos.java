@@ -38,7 +38,6 @@ public class Medicamentos
         values.put("PROXIMO_HORARIO",medicamento.getProximoHorario());
         values.put("MEDICACAO_CONTINUA",medicamento.getMedicacaoContinua());
         values.put("QTD_REST_MEDICAMENTO",medicamento.getQtdRestantesDoMedicamento());
-        values.put("ALARME_ATIVO",medicamento.getAlarmeAtivo());
         return values;
     }
 
@@ -94,7 +93,6 @@ public class Medicamentos
                 medicamento.setProximoHorario(cursor.getString(cursor.getColumnIndex("PROXIMO_HORARIO")));
                 medicamento.setMedicacaoContinua(cursor.getInt(cursor.getColumnIndex("MEDICACAO_CONTINUA")));
                 medicamento.setQtdRestantesDoMedicamento(cursor.getInt(cursor.getColumnIndex("QTD_REST_MEDICAMENTO")));
-                medicamento.setAlarmeAtivo(cursor.getInt(cursor.getColumnIndex("ALARME_ATIVO")));
 
                 todosMedicamentos.add(medicamento);
 
@@ -127,7 +125,7 @@ public class Medicamentos
                 medicamento.setProximoHorario(cursor.getString(cursor.getColumnIndex("PROXIMO_HORARIO")));
                 medicamento.setMedicacaoContinua(cursor.getInt(cursor.getColumnIndex("MEDICACAO_CONTINUA")));
                 medicamento.setQtdRestantesDoMedicamento(cursor.getInt(cursor.getColumnIndex("QTD_REST_MEDICAMENTO")));
-                medicamento.setAlarmeAtivo(cursor.getInt(cursor.getColumnIndex("ALARME_ATIVO")));
+
         }
 
         Log.i("GET MEDICAMENTO",medicamento.toString());
