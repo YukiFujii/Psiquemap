@@ -13,8 +13,12 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.psiquemap.psiquemap.entidades.Controle;
 import com.example.psiquemap.psiquemap.sql.DataBase;
+import com.example.psiquemap.psiquemap.sql.Feedbacks;
 import com.example.psiquemap.psiquemap.sql.PerguntasDoQuestionarioMINI;
+
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -35,6 +39,7 @@ public class MainActivity extends AppCompatActivity
     private DataBase dataBase;
     private SQLiteDatabase conn;
     private PerguntasDoQuestionarioMINI perguntasDoQuestionarioMINI;
+    private Feedbacks feedbacks;
 
 
     @Override
@@ -71,6 +76,24 @@ public class MainActivity extends AppCompatActivity
                 txtQuestionario.setEnabled(true);
                 txtQuestionario.setTextColor(Color.BLACK);
                 btnQuestionario.setEnabled(true);
+            }
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DATE,-1);
+
+            feedbacks = new Feedbacks(this.conn);
+
+            if(feedbacks.hasFeedback(Controle.getIdPaciente(),MetodosEmComum.getDataAtual(calendar)))
+            {
+                txtFeedback.setEnabled(false);
+                txtFeedback.setTextColor(Color.GRAY);
+                btnFeedback.setEnabled(false);
+            }
+            else
+            {
+                txtFeedback.setEnabled(true);
+                txtFeedback.setTextColor(Color.BLACK);
+                btnFeedback.setEnabled(true);
             }
         }
         else
@@ -140,6 +163,7 @@ public class MainActivity extends AppCompatActivity
 
         if(this.conexaoBD())
         {
+
             perguntasDoQuestionarioMINI = new PerguntasDoQuestionarioMINI(this.conn);
             Log.i("Perguntas restantes",""+perguntasDoQuestionarioMINI.getPerguntasRestantes());
             if(perguntasDoQuestionarioMINI.getPerguntasRestantes()==0)
@@ -153,6 +177,24 @@ public class MainActivity extends AppCompatActivity
                 txtQuestionario.setEnabled(true);
                 txtQuestionario.setTextColor(Color.BLACK);
                 btnQuestionario.setEnabled(true);
+            }
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DATE,-1);
+
+            feedbacks = new Feedbacks(this.conn);
+
+            if(feedbacks.hasFeedback(Controle.getIdPaciente(),MetodosEmComum.getDataAtual(calendar)))
+            {
+                txtFeedback.setEnabled(false);
+                txtFeedback.setTextColor(Color.GRAY);
+                btnFeedback.setEnabled(false);
+            }
+            else
+            {
+                txtFeedback.setEnabled(true);
+                txtFeedback.setTextColor(Color.BLACK);
+                btnFeedback.setEnabled(true);
             }
         }
         else

@@ -22,7 +22,7 @@ public class Feedback
 
     public Feedback(String sentimento,String observacao)
     {
-        this.setIdPaciente(Pacientes.getIdPaciente());
+        this.setIdPaciente(Controle.getIdPaciente());
         this.setSentimento(sentimento);
         this.setObservacao(observacao);
 
@@ -30,6 +30,7 @@ public class Feedback
         calendar.add(Calendar.DATE,-1);
 
         this.setData(MetodosEmComum.getDataAtual(calendar));
+
     }
 
     public String getIdPaciente() {

@@ -50,13 +50,13 @@ public class ScriptSQL {
     {
         StringBuilder sqlBuilder = new StringBuilder();
 
-        sqlBuilder.append("CREATE TABLE IF NOT EXISTS RESPOSTAS_DO_QUESTIONARIO_DIARIO ( ");
-        sqlBuilder.append("_id_PACIENTE                                 VARCHAR (15) , ");
-        sqlBuilder.append("DATA                                         VARCHAR (10) , ");
-        sqlBuilder.append("_id_PERGUNTA                                   VARCHAR (3) , ");
-        sqlBuilder.append("RESPOSTA                                     VARCHAR (10) , ");
-        sqlBuilder.append("PRIMARY KEY                     (_id_PACIENTE,DATA,QUESTAO) ");
-        sqlBuilder.append("                                                          );");
+        sqlBuilder.append("CREATE TABLE IF NOT EXISTS RESPOSTAS_DO_QUESTIONARIO_DIARIO    ( ");
+        sqlBuilder.append("_id_PACIENTE                                      VARCHAR (15) , ");
+        sqlBuilder.append("DATA                                              VARCHAR (10) , ");
+        sqlBuilder.append("_id_PERGUNTA                                       VARCHAR (3) , ");
+        sqlBuilder.append("RESPOSTA                                          VARCHAR (10) , ");
+        sqlBuilder.append("PRIMARY KEY                     (_id_PACIENTE,DATA,_id_PERGUNTA) ");
+        sqlBuilder.append("                                                               );");
 
         return sqlBuilder.toString();
     }

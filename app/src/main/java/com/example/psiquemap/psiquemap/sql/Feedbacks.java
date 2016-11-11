@@ -46,6 +46,16 @@ public class Feedbacks
             return true;
     }
 
+    public boolean hasFeedback(String idPaciente,String data)
+    {
+        Cursor cursor = conn.query("FEEDBACK",null,"_id_PACIENTE = ? AND DATA = ?",new String[]{idPaciente,data},null,null,null);
+
+        if (cursor.getCount()==0)
+            return false;
+        else
+            return true;
+    }
+
     public void update(Feedback feedback)
     {
         conn.update("FEEDBACK",preencheContentValues(feedback),"_id_PACIENTE = ? AND DATA = ?",new String[]{feedback.getIdPaciente(),feedback.getData()});
