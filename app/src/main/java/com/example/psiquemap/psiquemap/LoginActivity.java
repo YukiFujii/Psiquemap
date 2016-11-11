@@ -11,6 +11,7 @@
     import android.widget.Button;
     import android.widget.EditText;
 
+    import com.example.psiquemap.psiquemap.entidades.Controle;
     import com.example.psiquemap.psiquemap.entidades.Medicamento;
     import com.example.psiquemap.psiquemap.entidades.Paciente;
     import com.example.psiquemap.psiquemap.entidades.PerguntaDoQuestionario;
@@ -112,6 +113,8 @@
                      Paciente paciente = new Paciente("000001","Alcino Hiroyuki Fujii Júnior","R. Anisio Perissinotto",
                              302,"13140-538","22/04/1992","yuki@hotmail.com","48.612.219-0","405.049.548-14","(19) 99246-6557",
                              "Hiroyuki","123456");
+
+                     Controle.setIdPaciente(paciente.getId());
 
                      pacientes.insert(paciente);
                      this.inserirPerguntasNoDiario();

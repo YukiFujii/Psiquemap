@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.example.psiquemap.psiquemap.entidades.Controle;
 import com.example.psiquemap.psiquemap.entidades.Medicamento;
 
 /**
@@ -73,7 +74,7 @@ public class Medicamentos
     {
         ArrayAdapter<Medicamento> todosMedicamentos = new ArrayAdapter<Medicamento>(context,android.R.layout.simple_list_item_1);
 
-        Cursor cursor = conn.query("MEDICAMENTOS",null,"_id_PACIENTE = ?",new String[]{Pacientes.getIdPaciente()},null,null,null);
+        Cursor cursor = conn.query("MEDICAMENTOS",null,"_id_PACIENTE = ?",new String[]{Controle.getIdPaciente()},null,null,null);
 
         cursor.moveToFirst();
 
@@ -129,6 +130,7 @@ public class Medicamentos
                 medicamento.setAlarmeAtivo(cursor.getInt(cursor.getColumnIndex("ALARME_ATIVO")));
         }
 
+        Log.i("GET MEDICAMENTO",medicamento.toString());
         return medicamento;
     }
 

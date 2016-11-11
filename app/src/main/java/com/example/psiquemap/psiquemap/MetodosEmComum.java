@@ -66,6 +66,7 @@ public final class MetodosEmComum
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.MINUTE,hora.getMinutes());
         calendar.set(Calendar.HOUR_OF_DAY,hora.getHours());
+        calendar.set(Calendar.SECOND,0);
 
         Log.i("Calender com hora",MetodosEmComum.horaToString(calendar));
 

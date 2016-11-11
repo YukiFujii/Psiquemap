@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.example.psiquemap.psiquemap.entidades.Alarme;
+import com.example.psiquemap.psiquemap.entidades.Controle;
 import com.example.psiquemap.psiquemap.entidades.Medicamento;
 import com.example.psiquemap.psiquemap.sql.Alarmes;
 import com.example.psiquemap.psiquemap.sql.DataBase;
@@ -77,6 +78,10 @@ public class DetalheMedicamento extends AppCompatActivity {
             if ((bundle != null) && (bundle.containsKey("MEDICAMENTO")))
             {
                 this.medicamento = (Medicamento) bundle.getSerializable("MEDICAMENTO");
+
+                Controle.setIdPaciente(this.medicamento.getIdPaciente());
+                Log.i("Controle idPaciente",Controle.getIdPaciente());
+
                 preencheDados();
 
                 if (medicamento.getUltimoHorario().equals(""))
@@ -97,18 +102,27 @@ public class DetalheMedicamento extends AppCompatActivity {
                         {
                             Alarme alarme = new Alarme(medicamento.getIdPaciente(),medicamento.getIdMedicacao(),medicamento.getProximoHorario());
                             alarmes.insert(alarme);
-                            alarme = alarmes.pegarProximoAlarme();
-                            primeiroMedicamentoDaFilaDeAlarmes = medicamentos.getMedicamento(alarme.getIdPaciente(),alarme.getIdMedicacao());
-                            alarmes.delete(primeiroMedicamentoDaFilaDeAlarmes.getIdPaciente(),primeiroMedicamentoDaFilaDeAlarmes.getIdMedicacao());
 
-                            AlertDialog.Builder dlg = new AlertDialog.Builder(DetalheMedicamento.this);
-                            dlg.setMessage("Alarme ativado! Você receberá uma notificação às " + primeiroMedicamentoDaFilaDeAlarmes.getProximoHorario());
-                            dlg.setNeutralButton("OK", null);
-                            dlg.show();
+                            if(alarmes.temProximoAlarme())
+                            {
+                                alarme = alarmes.pegarProximoAlarme();
 
-                            teste();
+                                primeiroMedicamentoDaFilaDeAlarmes = medicamentos.getMedicamento(alarme.getIdPaciente(), alarme.getIdMedicacao());
 
-                            //chamarAlarme();*/
+                                AlertDialog.Builder dlg = new AlertDialog.Builder(DetalheMedicamento.this);
+                                dlg.setMessage("Alarme ativado! Você receberá uma notificação às " + primeiroMedicamentoDaFilaDeAlarmes.getProximoHorario());
+                                dlg.setNeutralButton("OK", null);
+                                dlg.show();
+
+                                chamarAlarme();
+                            }
+                            else
+                            {
+                                AlertDialog.Builder dlg = new AlertDialog.Builder(DetalheMedicamento.this);
+                                dlg.setMessage("Erro ao inserir alarme!");
+                                dlg.setNeutralButton("OK", null);
+                                dlg.show();
+                            }
 
                         } else {
 
@@ -119,14 +133,15 @@ public class DetalheMedicamento extends AppCompatActivity {
 
                             alarmes.delete(medicamento.getIdPaciente(),medicamento.getIdMedicacao());
 
-                            if(alarmes.pegarProximoAlarme()==null)
-                                onDestroy();
-                            else
+                            if(alarmes.temProximoAlarme())
                             {
                                 Alarme proxAlarme = alarmes.pegarProximoAlarme();
                                 primeiroMedicamentoDaFilaDeAlarmes = medicamentos.getMedicamento(proxAlarme.getIdPaciente(),proxAlarme.getIdMedicacao());
                                 chamarAlarme();
                             }
+
+                            else
+                                onDestroy();
                         }
                     }
                 });
@@ -160,7 +175,7 @@ public class DetalheMedicamento extends AppCompatActivity {
 
     }
 
-    public void teste()
+    public void chamarAlarme()
     {
         Intent intent = new Intent("DISPARAR_ALARME");
         intent.putExtra("MEDICAMENTO", this.primeiroMedicamentoDaFilaDeAlarmes);
@@ -169,25 +184,8 @@ public class DetalheMedicamento extends AppCompatActivity {
         Log.i("Valor de ProxHorario",this.primeiroMedicamentoDaFilaDeAlarmes.getProximoHorario());
         Calendar c = MetodosEmComum.stringToCalendar(this.primeiroMedicamentoDaFilaDeAlarmes.getProximoHorario());
 
-        Log.i("Valor gTM c",c.getTimeInMillis()+"");
-        Calendar calendar = Calendar.getInstance();
-        Log.i("Valor gTM atual",calendar.getTimeInMillis()+"");
-        calendar.add(Calendar.SECOND, 15);
-        Log.i("Valor gTM deps 15",""+c.getTimeInMillis());
-
         AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarme.set(AlarmManager.RTC_WAKEUP,c.getTimeInMillis(),p);
-    }
-
-    public void chamarAlarme()
-    {
-        Intent intent = new Intent("DISPARAR_ALARME");
-        intent.putExtra("MEDICAMENTO", this.medicamento);
-        PendingIntent p = PendingIntent.getBroadcast(this, 0, intent, 0);
-
-        AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarme.set(AlarmManager.RTC_WAKEUP,MetodosEmComum.stringToCalendar(medicamento.getProximoHorario()).getTimeInMillis(),p);
-
     }
 
     public void onDestroy()

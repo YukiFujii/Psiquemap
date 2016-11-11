@@ -47,9 +47,6 @@ public class Alarmes
         {
             Log.i("Entrou no","JA TEM");
             update(alarme);
-
-            Cursor cursor = conn.query("PROXIMO_ALARME",null,null,null,null,null,null);
-            Log.i("ALARMES APOS ATUALIZAR",""+cursor.getCount());
         }
 
         else
@@ -74,6 +71,8 @@ public class Alarmes
     public void update(Alarme alarme)
     {
         conn.update("PROXIMO_ALARME",preencheContentValues(alarme),"_id_PACIENTE = ? AND _id_MEDICACAO = ?",new String[]{alarme.getIdPaciente(),alarme.getIdMedicacao()});
+        Cursor cursor = conn.query("PROXIMO_ALARME",null,null,null,null,null,null);
+        Log.i("ALARMES APOS ATUALIZAR",""+cursor.getCount());
     }
 
     public void delete(String idPac,String idMed)
@@ -98,7 +97,7 @@ public class Alarmes
 
         cursor.moveToFirst();
 
-        Log.i("QTD",""+cursor.getCount());
+        Log.i("QTD DE ALARMES",""+cursor.getCount());
 
         if(cursor.getCount()>0)
         {
@@ -115,21 +114,23 @@ public class Alarmes
 
                 if (idMedicacao.equals(""))
                 {
-                    Log.i("idMedicacao","");
+                    Log.i("idMedicacao","vazio");
                     idMedicacao = alarme.getIdMedicacao();
                     idPaciente = alarme.getIdPaciente();
                     proxHorario = MetodosEmComum.stringToCalendar(alarme.getTempoRestante());
                     this.inverterValorEhProximo(alarme.getIdPaciente(),alarme.getIdMedicacao());
-                    Log.i("TEMPO SUBTRAIDO", MetodosEmComum.horaToString(proxHorario));
+                    Log.i("ALARME ATRIBUTOS",alarme.toString());
                 } else
                 {
-                    Log.i("idMedicacao",alarme.getIdMedicacao());
+                    Log.i("Variaveis statics",alarme.toString());
+
                     int resul = proxHorario.compareTo(tempoRestante(MetodosEmComum.stringToCalendar(alarme.getTempoRestante())));
 
-                    Log.i("Resul Compare",""+proxHorario.compareTo(tempoRestante(MetodosEmComum.stringToCalendar(alarme.getTempoRestante()))));
+                    Log.i("Resul Compare",""+resul);
 
-                    if (resul > 0)
+                    if (resul < 0)
                     {
+                        Log.i("ORDENACAO", "TROCOU ALARME!");
                         this.inverterValorEhProximo(idPaciente,idMedicacao);
                         idMedicacao = alarme.getIdMedicacao();
                         idPaciente = alarme.getIdPaciente();
@@ -153,8 +154,6 @@ public class Alarmes
 
         cursor.moveToFirst();
 
-        Log.i("INV. VAL. QTD",""+cursor.getCount());
-
         if(cursor.getCount()>0)
         {
             alarme = new Alarme();
@@ -164,20 +163,12 @@ public class Alarmes
             alarme.seteProximo(cursor.getInt(cursor.getColumnIndex("E_O_PROXIMO")));
 
             if (alarme.geteProximo() == 0)
-            {
-                Log.i("geteProximo igual", "0");
                 alarme.seteProximo(1);
-                Log.i("Set to", "" + alarme.geteProximo());
-            }
             else
-            {
-                Log.i("geteProximo igual", "1");
                 alarme.seteProximo(0);
-                Log.i("Set to", "" + alarme.geteProximo());
-            }
         }
 
-        this.insert(alarme);
+        this.update(alarme);
     }
 
     public Alarme pegarProximoAlarme()
@@ -185,8 +176,6 @@ public class Alarmes
         Alarme alarme = null;
 
         Cursor cursor = conn.query("PROXIMO_ALARME",null,"E_O_PROXIMO = ?",new String[]{"1"},null,null,null);
-
-        Log.i("pegarProxAlarme QTD",""+cursor.getCount());
 
         cursor.moveToFirst();
 
@@ -199,7 +188,24 @@ public class Alarmes
             alarme.seteProximo(cursor.getInt(cursor.getColumnIndex("E_O_PROXIMO")));
         }
 
+        Log.i("Alarme Pego",alarme.toString());
+
         return alarme;
+    }
+
+    public boolean temProximoAlarme()
+    {
+        boolean ret;
+        Cursor cursor = conn.query("PROXIMO_ALARME",null,"E_O_PROXIMO = ?",new String[]{"1"},null,null,null);
+
+        if(cursor.getCount()>0)
+            ret = true;
+        else
+            ret = false;
+
+        Log.i("TEM PROXIMO ALARME",""+ret);
+
+        return ret;
     }
 
     private Calendar tempoRestante(Calendar cal)

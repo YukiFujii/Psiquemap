@@ -29,7 +29,7 @@ public class Medicamento implements Serializable
 
         public Medicamento (String idMedicacao,String nomeMedicacao,int intervalo,int dose,int durante,String observacoes,int medicacaoContinua)
         {
-            setIdPaciente(Pacientes.getIdPaciente());
+            setIdPaciente(Controle.getIdPaciente());
             setIdMedicacao(idMedicacao);
             setNomeMedicacao(nomeMedicacao);
             setIntervalo(intervalo);
@@ -57,17 +57,6 @@ public class Medicamento implements Serializable
         {
             this.setQtdRestantesDoMedicamento(this.getQtdRestantesDoMedicamento()-1);
         }
-
-
-    public String toString()
-    {
-        String ret = "";
-
-        ret = ret + this.getNomeMedicacao();
-
-        return ret;
-
-    }
 
     public String getNomeMedicacao() {
         return nomeMedicacao;
@@ -163,5 +152,12 @@ public class Medicamento implements Serializable
 
     public int getAlarmeAtivo() {
         return alarmeAtivo;
+    }
+
+    public String toString()
+    {
+        String ret = this.getNomeMedicacao();
+
+        return ret;
     }
 }
