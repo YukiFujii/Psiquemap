@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.example.psiquemap.psiquemap.entidades.Feedback;
+import com.example.psiquemap.psiquemap.sql.Controles;
 import com.example.psiquemap.psiquemap.sql.DataBase;
 import com.example.psiquemap.psiquemap.sql.Feedbacks;
 
@@ -31,6 +32,7 @@ public class FeedbackScreen extends AppCompatActivity implements AdapterView.OnI
     private DataBase dataBase;
     private SQLiteDatabase conn;
     private Feedbacks feedbacks;
+    private Controles controles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,7 @@ public class FeedbackScreen extends AppCompatActivity implements AdapterView.OnI
         if(this.conexaoBD())
         {
             this.feedbacks = new Feedbacks(this.conn);
+            this.controles = new Controles(this.conn);
         }
         else
         {
@@ -101,7 +104,7 @@ public class FeedbackScreen extends AppCompatActivity implements AdapterView.OnI
     {
         if(this.verificacao())
         {
-            Feedback feedback = new Feedback(this.classificacaoFeedback,this.editObservacao.getText().toString());
+            Feedback feedback = new Feedback(controles.getIdPaciente(),this.classificacaoFeedback,this.editObservacao.getText().toString());
             feedbacks.insert(feedback);
             finish();
         }

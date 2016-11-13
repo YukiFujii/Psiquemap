@@ -32,6 +32,7 @@ public class DataBase extends SQLiteOpenHelper implements Serializable
         db.execSQL(ScriptSQL.getFeedback());
         db.execSQL(ScriptSQL.getMedicamentos());
         db.execSQL(ScriptSQL.getProxAlarme());
+        db.execSQL(ScriptSQL.getControle());
     }
 
     @Override

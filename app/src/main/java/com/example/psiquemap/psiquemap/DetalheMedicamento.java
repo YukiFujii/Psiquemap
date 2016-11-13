@@ -21,6 +21,7 @@ import com.example.psiquemap.psiquemap.entidades.Alarme;
 import com.example.psiquemap.psiquemap.entidades.Controle;
 import com.example.psiquemap.psiquemap.entidades.Medicamento;
 import com.example.psiquemap.psiquemap.sql.Alarmes;
+import com.example.psiquemap.psiquemap.sql.Controles;
 import com.example.psiquemap.psiquemap.sql.DataBase;
 import com.example.psiquemap.psiquemap.sql.Medicamentos;
 
@@ -48,6 +49,7 @@ public class DetalheMedicamento extends AppCompatActivity {
     private SQLiteDatabase conn;
     private Medicamentos medicamentos;
     private Alarmes alarmes;
+    private Controles controles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -69,15 +71,14 @@ public class DetalheMedicamento extends AppCompatActivity {
         if(this.conexaoBD())
         {
             medicamentos = new Medicamentos(this.conn);
-            alarmes = new Alarmes(conn);
+            alarmes = new Alarmes(this.conn);
+            controles = new Controles(this.conn);
 
             Bundle bundle = getIntent().getExtras();
 
             if ((bundle != null) && (bundle.containsKey("MEDICAMENTO")))
             {
                 this.medicamento = (Medicamento) bundle.getSerializable("MEDICAMENTO");
-
-                Controle.setIdPaciente(this.medicamento.getIdPaciente());
 
                 preencheDados();
 
@@ -93,7 +94,7 @@ public class DetalheMedicamento extends AppCompatActivity {
 
                         if (checkBoxAviso.isChecked())
                         {
-                            Alarme alarme = new Alarme(Controle.getIdPaciente(),medicamento.getIdMedicacao(),medicamento.getProximoHorario());
+                            Alarme alarme = new Alarme(controles.getIdPaciente(),medicamento.getIdMedicacao(),medicamento.getProximoHorario());
                             Log.i("Criando alarme",alarme.toString());
                             alarmes.insertEmOrdem(alarme);
 
@@ -210,6 +211,12 @@ public class DetalheMedicamento extends AppCompatActivity {
             txtDurante.setText("Medicação contínua");
         else
             txtDurante.setText("Durante: "+medicamento.getDurante()+" dia(s)");
+
+        if(!medicamento.getProximoHorario().equals(""))
+            txtProximoHorario.setText(medicamento.getProximoHorario()+" horas.");
+
+        if(alarmes.hasAlarme(medicamento.getIdPaciente(),medicamento.getIdMedicacao()))
+            checkBoxAviso.setChecked(true);
     }
 
     public void exibeHoraUltimoHorario(View view)
@@ -270,12 +277,13 @@ public class DetalheMedicamento extends AppCompatActivity {
         medicamentos.update(medicamento);
 
         txtProximoHorario.setText(medicamento.getProximoHorario()+" horas.");
+        checkBoxAviso.setChecked(false);
     }
 
     public void btnSalvarDetalheMedicamento(View view)
     {
         Intent it = new Intent(this, MainActivity.class);
-        startActivityForResult(it,0);
+        startActivityForResult(it, 0);
     }
 
 }

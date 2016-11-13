@@ -6,6 +6,9 @@
     import android.support.v7.app.AlertDialog;
     import android.support.v7.app.AppCompatActivity;
     import android.os.Bundle;
+    import android.view.Menu;
+    import android.view.MenuInflater;
+    import android.view.MenuItem;
     import android.view.View;
     import android.widget.ArrayAdapter;
     import android.widget.Button;
@@ -16,6 +19,7 @@
     import com.example.psiquemap.psiquemap.entidades.Paciente;
     import com.example.psiquemap.psiquemap.entidades.PerguntaDoQuestionario;
     import com.example.psiquemap.psiquemap.entidades.Sintoma;
+    import com.example.psiquemap.psiquemap.sql.Controles;
     import com.example.psiquemap.psiquemap.sql.DataBase;
     import com.example.psiquemap.psiquemap.sql.Medicamentos;
     import com.example.psiquemap.psiquemap.sql.Pacientes;
@@ -33,6 +37,11 @@
      private Button btnLogin;
      private DataBase dataBase;
      private SQLiteDatabase conn;
+
+     private Controle controle;
+     private Controles controles;
+     private Paciente paciente;
+     private Pacientes pacientes;
 
 
      @Override
@@ -105,16 +114,18 @@
      {
          if(this.conexaoBD())
          {
-             Pacientes pacientes = new Pacientes(conn);
+             controles = new Controles(conn);
+             pacientes = new Pacientes(conn);
 
              switch (email)
              {
                  case "y":
-                     Paciente paciente = new Paciente("000001","Alcino Hiroyuki Fujii Júnior","R. Anisio Perissinotto",
-                             302,"13140-538","22/04/1992","yuki@hotmail.com","48.612.219-0","405.049.548-14","(19) 99246-6557",
-                             "Hiroyuki","123456");
+                                paciente = new Paciente("000001","Alcino Hiroyuki Fujii Júnior","R. Anisio Perissinotto",
+                                302,"13140-538","22/04/1992","yuki@hotmail.com","48.612.219-0","405.049.548-14","(19) 99246-6557",
+                                "Hiroyuki","123456");
 
-                     Controle.setIdPaciente(paciente.getId());
+                     controle = new Controle(paciente.getId());
+                     controles.insert(controle);
 
                      pacientes.insert(paciente);
                      this.inserirPerguntasNoDiario();
@@ -124,11 +135,14 @@
                      break;
 
                  case "ronaldo@gmail.com":
-                     Paciente paciente2 = new Paciente("000002","Ronaldo Teodoro","R. Campinas",
-                             100,"13000-000","22/04/1986","ronaldo@gmail.com","12.501.108-9","394.938.437-03","(19) 99999-9999",
-                             "123","234567");
+                                paciente = new Paciente("000002","Ronaldo Teodoro","R. Campinas",
+                                100,"13000-000","22/04/1986","ronaldo@gmail.com","12.501.108-9","394.938.437-03","(19) 99999-9999",
+                                "123","234567");
 
-                     pacientes.insert(paciente2);
+                     controle = new Controle(paciente.getId());
+                     controles.insert(controle);
+
+                     pacientes.insert(paciente);
                      this.inserirPerguntasNoDiario();
                      this.inserirPerguntasNoQuestionarioMINI();
                      this.inserirSintomas();
@@ -222,15 +236,15 @@
 
          Medicamentos medicamentos = new Medicamentos(this.conn);
 
-         Medicamento m1 = new Medicamento("01","Aurorix",1,100,2,"Sem observações.",0);
+         Medicamento m1 = new Medicamento(controles.getIdPaciente(),"01","Aurorix",1,100,2,"Sem observações.",0);
 
-         Medicamento m2 = new Medicamento("02","Stablon",8,25,5,"Sem observações.",1);
+         Medicamento m2 = new Medicamento(controles.getIdPaciente(),"02","Stablon",8,25,5,"Sem observações.",1);
 
-         Medicamento m3 = new Medicamento("03","Tofranil",4,25,7,"Sem observações.",0);
+         Medicamento m3 = new Medicamento(controles.getIdPaciente(),"03","Tofranil",4,25,7,"Sem observações.",0);
 
-         Medicamento m4 = new Medicamento("04","Aurorix2",2,100,2,"Sem observações.",0);
+         Medicamento m4 = new Medicamento(controles.getIdPaciente(),"04","Aurorix2",2,100,2,"Sem observações.",0);
 
-         Medicamento m5 = new Medicamento("05","Aurorix3",3,100,2,"Sem observações.",0);
+         Medicamento m5 = new Medicamento(controles.getIdPaciente(),"05","Aurorix3",3,100,2,"Sem observações.",0);
 
 
          medicamentos.insert(m1);

@@ -20,9 +20,9 @@ public class Feedback
 
     public Feedback(){}
 
-    public Feedback(String sentimento,String observacao)
+    public Feedback(String idPaciente,String sentimento,String observacao)
     {
-        this.setIdPaciente(Controle.getIdPaciente());
+        this.setIdPaciente(idPaciente);
         this.setSentimento(sentimento);
         this.setObservacao(observacao);
 

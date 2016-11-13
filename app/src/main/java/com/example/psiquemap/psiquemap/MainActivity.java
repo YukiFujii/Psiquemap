@@ -6,7 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.psiquemap.psiquemap.entidades.Controle;
+import com.example.psiquemap.psiquemap.sql.Controles;
 import com.example.psiquemap.psiquemap.sql.DataBase;
 import com.example.psiquemap.psiquemap.sql.Feedbacks;
 import com.example.psiquemap.psiquemap.sql.PerguntasDoQuestionarioMINI;
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity
     private SQLiteDatabase conn;
     private PerguntasDoQuestionarioMINI perguntasDoQuestionarioMINI;
     private Feedbacks feedbacks;
+    private Controles controles;
 
 
     @Override
@@ -63,6 +67,7 @@ public class MainActivity extends AppCompatActivity
 
         if(this.conexaoBD())
         {
+            controles = new Controles(this.conn);
             perguntasDoQuestionarioMINI = new PerguntasDoQuestionarioMINI(this.conn);
             Log.i("Perguntas restantes",""+perguntasDoQuestionarioMINI.getPerguntasRestantes());
             if(perguntasDoQuestionarioMINI.getPerguntasRestantes()==0)
@@ -83,7 +88,7 @@ public class MainActivity extends AppCompatActivity
 
             feedbacks = new Feedbacks(this.conn);
 
-            if(feedbacks.hasFeedback(Controle.getIdPaciente(),MetodosEmComum.getDataAtual(calendar)))
+            if(feedbacks.hasFeedback(this.controles.getIdPaciente(),MetodosEmComum.getDataAtual(calendar)))
             {
                 txtFeedback.setEnabled(false);
                 txtFeedback.setTextColor(Color.GRAY);
@@ -104,6 +109,35 @@ public class MainActivity extends AppCompatActivity
             dlg.show();
         }
 
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main,menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case R.id.mni_logout:
+                logout();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void logout()
+    {
+        controles.delete(controles.getIdPaciente());
+        Intent it = new Intent(this, LoginActivity.class);
+        startActivityForResult(it, 0);
+        finish();
     }
 
     private boolean conexaoBD()
@@ -184,7 +218,7 @@ public class MainActivity extends AppCompatActivity
 
             feedbacks = new Feedbacks(this.conn);
 
-            if(feedbacks.hasFeedback(Controle.getIdPaciente(),MetodosEmComum.getDataAtual(calendar)))
+            if(feedbacks.hasFeedback(this.controles.getIdPaciente(),MetodosEmComum.getDataAtual(calendar)))
             {
                 txtFeedback.setEnabled(false);
                 txtFeedback.setTextColor(Color.GRAY);
@@ -207,26 +241,4 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

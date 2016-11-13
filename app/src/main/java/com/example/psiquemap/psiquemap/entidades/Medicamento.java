@@ -26,9 +26,9 @@ public class Medicamento implements Serializable
 
         public Medicamento(){}
 
-        public Medicamento (String idMedicacao,String nomeMedicacao,int intervalo,int dose,int durante,String observacoes,int medicacaoContinua)
+        public Medicamento (String idPaciente,String idMedicacao,String nomeMedicacao,int intervalo,int dose,int durante,String observacoes,int medicacaoContinua)
         {
-            setIdPaciente(Controle.getIdPaciente());
+            setIdPaciente(idPaciente);
             setIdMedicacao(idMedicacao);
             setNomeMedicacao(nomeMedicacao);
             setIntervalo(intervalo);

@@ -6,13 +6,20 @@ package com.example.psiquemap.psiquemap.entidades;
 
 public final class Controle
 {
-    private static String idPaciente;
+    private String idPaciente;
 
-    public static String getIdPaciente() {
-        return idPaciente;
+    public Controle(String idPaciente)
+    {
+        setIdPaciente(idPaciente);
     }
 
-    public static void setIdPaciente(String idPaciente) {
-        Controle.idPaciente = idPaciente;
+    public String getIdPaciente() {
+        return this.idPaciente;
     }
+
+    public void setIdPaciente(String idPaciente)
+    {
+        this.idPaciente = idPaciente;
+    }
+
 }

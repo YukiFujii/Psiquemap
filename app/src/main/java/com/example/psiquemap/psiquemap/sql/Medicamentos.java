@@ -73,7 +73,11 @@ public class Medicamentos
     {
         ArrayAdapter<Medicamento> todosMedicamentos = new ArrayAdapter<Medicamento>(context,android.R.layout.simple_list_item_1);
 
-        Cursor cursor = conn.query("MEDICAMENTOS",null,"_id_PACIENTE = ?",new String[]{Controle.getIdPaciente()},null,null,null);
+        Cursor cursor = conn.query("CONTROLE",null,null,null,null,null,null);
+        cursor.moveToFirst();
+        String idPaciente = cursor.getString(cursor.getColumnIndex("_id_PACIENTE"));
+
+        cursor = conn.query("MEDICAMENTOS",null,"_id_PACIENTE = ?",new String[]{idPaciente},null,null,null);
 
         cursor.moveToFirst();
 

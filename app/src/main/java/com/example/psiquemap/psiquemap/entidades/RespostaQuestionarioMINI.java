@@ -15,9 +15,9 @@ public class RespostaQuestionarioMINI
 
     public  RespostaQuestionarioMINI(){}
 
-    public RespostaQuestionarioMINI(String data,String modulo,String questao,String resposta)
+    public RespostaQuestionarioMINI(String idPaciente,String data,String modulo,String questao,String resposta)
     {
-        setIdPaciente(Controle.getIdPaciente());
+        setIdPaciente(idPaciente);
         setData(data);
         setIdModulo(modulo);
         setQuestao(questao);

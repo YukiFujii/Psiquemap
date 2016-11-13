@@ -193,4 +193,16 @@ public class ScriptSQL {
 
     }
 
+    public static String getControle()
+    {
+        StringBuilder sqlBuilder = new StringBuilder();
+
+        sqlBuilder.append("CREATE TABLE IF NOT EXISTS CONTROLE(                 ");
+        sqlBuilder.append("_id_PACIENTE                           VARCHAR (15)  ");
+        sqlBuilder.append(");");
+
+        return sqlBuilder.toString();
+
+    }
+
 }

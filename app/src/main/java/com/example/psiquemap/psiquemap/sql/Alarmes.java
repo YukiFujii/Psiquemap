@@ -149,6 +149,17 @@ public class Alarmes
             return true;
     }
 
+    public boolean hasAlarme(String idPac,String idMed)
+    {
+
+        Cursor cursor = conn.query("PROXIMO_ALARME",null,"_id_PACIENTE = ? AND _id_MEDICACAO = ?",new String[]{idPac,idMed},null,null,null);
+
+        if (cursor.getCount()==0)
+            return false;
+        else
+            return true;
+    }
+
     public void update(Alarme alarme)
     {
         Log.i("Chamou","update");

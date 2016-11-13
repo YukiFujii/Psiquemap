@@ -22,6 +22,7 @@ import com.example.psiquemap.psiquemap.R;
 import com.example.psiquemap.psiquemap.entidades.PerguntaDoQuestionario;
 import com.example.psiquemap.psiquemap.entidades.RespostaQuestionarioDiario;
 import com.example.psiquemap.psiquemap.entidades.RespostaQuestionarioMINI;
+import com.example.psiquemap.psiquemap.sql.Controles;
 import com.example.psiquemap.psiquemap.sql.DataBase;
 import com.example.psiquemap.psiquemap.sql.PerguntasDoDiario;
 import com.example.psiquemap.psiquemap.sql.PerguntasDoQuestionarioMINI;
@@ -50,6 +51,7 @@ public class RespostaTime extends AppCompatActivity {
 
     private DataBase dataBase;
     private SQLiteDatabase conn;
+    private Controles controles;
     private PerguntasDoDiario perguntasDoDiario;
     private RespostasQuestionarioDiario respostasQuestionarioDiario;
     private PerguntasDoQuestionarioMINI perguntasDoQuestionarioMINI;
@@ -71,6 +73,8 @@ public class RespostaTime extends AppCompatActivity {
 
         if(this.conexaoBD())
         {
+            controles = new Controles(this.conn);
+
             Bundle bundle = getIntent().getExtras();
 
             if ((bundle != null) && (bundle.containsKey("QUESTIONARIO")))
@@ -141,7 +145,7 @@ public class RespostaTime extends AppCompatActivity {
                 {
                     this.perguntasDoQuestionarioMINI.delete(this.pergunta.getPerguntaId(),this.pergunta.getQuestao());
 
-                    this.respostaQuestionarioMINI = new RespostaQuestionarioMINI(MetodosEmComum.getDataAtual(),this.pergunta.getPerguntaId(),this.pergunta.getQuestao(),this.resposta);
+                    this.respostaQuestionarioMINI = new RespostaQuestionarioMINI(controles.getIdPaciente(),MetodosEmComum.getDataAtual(),this.pergunta.getPerguntaId(),this.pergunta.getQuestao(),this.resposta);
                     this.respostasQuestionarioMINI.insert(this.respostaQuestionarioMINI);
 
                     this.pergunta = this.perguntasDoQuestionarioMINI.getPerguntaQuestionarioMINI();
@@ -187,7 +191,7 @@ public class RespostaTime extends AppCompatActivity {
                     this.pergunta.setFoiRespondida(1);
                     this.perguntasDoDiario.update(this.pergunta);
 
-                    this.respostaQuestionarioDiario = new RespostaQuestionarioDiario(MetodosEmComum.getDataAtual(),this.pergunta.getPerguntaId(),this.resposta);
+                    this.respostaQuestionarioDiario = new RespostaQuestionarioDiario(controles.getIdPaciente(),MetodosEmComum.getDataAtual(),this.pergunta.getPerguntaId(),this.resposta);
                     this.respostasQuestionarioDiario.insert(this.respostaQuestionarioDiario);
 
                     this.pergunta = this.perguntasDoDiario.getPerguntaDiario();

@@ -13,9 +13,9 @@ public class RespostaQuestionarioDiario
 
     public  RespostaQuestionarioDiario(){}
 
-    public RespostaQuestionarioDiario(String data,String idPergunta,String resposta)
+    public RespostaQuestionarioDiario(String idPaciente,String data,String idPergunta,String resposta)
     {
-        setIdPaciente(Controle.getIdPaciente());
+        setIdPaciente(idPaciente);
         setData(data);
         setIdPergunta(idPergunta);
         setResposta(resposta);
