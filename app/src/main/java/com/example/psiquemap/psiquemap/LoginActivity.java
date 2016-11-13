@@ -222,15 +222,22 @@
 
          Medicamentos medicamentos = new Medicamentos(this.conn);
 
-         Medicamento m1 = new Medicamento("01","Aurorix",2,100,2,"Sem observações.",0);
+         Medicamento m1 = new Medicamento("01","Aurorix",1,100,2,"Sem observações.",0);
 
-         Medicamento m2 = new Medicamento("02","STABLON",8,25,5,"Sem observações.",1);
+         Medicamento m2 = new Medicamento("02","Stablon",8,25,5,"Sem observações.",1);
 
-         Medicamento m3 = new Medicamento("03","Tofranil",1,25,7,"Sem observações.",0);
+         Medicamento m3 = new Medicamento("03","Tofranil",4,25,7,"Sem observações.",0);
+
+         Medicamento m4 = new Medicamento("04","Aurorix2",2,100,2,"Sem observações.",0);
+
+         Medicamento m5 = new Medicamento("05","Aurorix3",3,100,2,"Sem observações.",0);
+
 
          medicamentos.insert(m1);
          medicamentos.insert(m2);
          medicamentos.insert(m3);
+         medicamentos.insert(m4);
+         medicamentos.insert(m5);
 
      }
 

@@ -41,37 +41,33 @@ public class BroadcastReceiverAlarme extends BroadcastReceiver {
     private SQLiteDatabase conn;
     private Alarmes alarmes;
     private Medicamento medicamento;
+    private Medicamentos medicamentos;
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
         this.context = context;
-
-        Bundle bundle = intent.getExtras();
-
-        this.medicamento = (Medicamento) bundle.get("MEDICAMENTO");
-        Log.i("Medicamento Broadcast",medicamento.toString());
-
-        Controle.setIdPaciente(this.medicamento.getIdPaciente());
-        Log.i("Controle idPaciente",Controle.getIdPaciente());
-
-        Intent it = new Intent(context,DetalheMedicamento.class);
-        it.putExtra("MEDICAMENTO",this.medicamento);
-
-        gerarNotificacao(context,it, "Psiquimap", "Lembrete: ", "Hora de tomar "+this.medicamento.getNomeMedicacao()+".");
+        Alarme alarme;
 
         if(this.conexaoBD())
         {
-            Medicamentos medicamentos = new Medicamentos(this.conn);
-            Alarmes alarmes = new Alarmes(this.conn);
+            medicamentos = new Medicamentos(this.conn);
+            alarmes = new Alarmes(this.conn);
 
-            alarmes.delete(this.medicamento.getIdPaciente(),this.medicamento.getIdMedicacao());
+            alarme = alarmes.pegarProximoAlarme();
+            medicamento = medicamentos.getMedicamento(alarme.getIdPaciente(),alarme.getIdMedicacao());
+
+            Intent it = new Intent(context,DetalheMedicamento.class);
+            it.putExtra("MEDICAMENTO",this.medicamento);
+
+            gerarNotificacao(context,it, "Psiquimap", "Lembrete: ", "Hora de tomar "+this.medicamento.getNomeMedicacao()+".");
+
+            Log.i("DELETANDO EM ORDEM",this.medicamento.getIdPaciente()+" / " + this.medicamento.getIdMedicacao());
+            alarmes.deletarEmOrdem(this.medicamento.getIdPaciente(),this.medicamento.getIdMedicacao());
             this.onDestroy();
 
             if(alarmes.temProximoAlarme())
             {
-                Alarme alarme = alarmes.pegarProximoAlarme();
-                this.medicamento = medicamentos.getMedicamento(alarme.getIdPaciente(), alarme.getIdMedicacao());
                 chamarAlarme();
                 Log.i("PROXIMO ALARME", "OK");
             }
@@ -88,11 +84,22 @@ public class BroadcastReceiverAlarme extends BroadcastReceiver {
 
     public void chamarAlarme()
     {
+        Alarme a = alarmes.pegarProximoAlarme();
+
+        Log.i("ALARME PEGO",a.toString());
+
+        medicamento = medicamentos.getMedicamento(a.getIdPaciente(),a.getIdMedicacao());
+
         Intent intent = new Intent("DISPARAR_ALARME");
         intent.putExtra("MEDICAMENTO", medicamento);
         PendingIntent p = PendingIntent.getBroadcast(this.context, 0, intent, 0);
 
-        Calendar c = MetodosEmComum.stringToCalendar(medicamento.getProximoHorario());
+        Log.i("Valor de ProxHorario",this.medicamento.getProximoHorario());
+        Calendar c = MetodosEmComum.ajusteData(MetodosEmComum.stringToCalendar(medicamento.getProximoHorario()));
+
+        Calendar calendar = Calendar.getInstance();
+        Log.i("GTM ALARME",""+c.getTimeInMillis());
+        Log.i("GTM Agora",""+calendar.getTimeInMillis());
 
         AlarmManager alarme = (AlarmManager)this.context.getSystemService(ALARM_SERVICE);
         alarme.set(AlarmManager.RTC_WAKEUP,c.getTimeInMillis(),p);

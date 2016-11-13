@@ -19,9 +19,7 @@ import java.util.Date;
 public class Alarmes
 {
     private SQLiteDatabase conn;
-    private static String idMedicacao = "";
-    private static String idPaciente = "";
-    private static Calendar proxHorario = null;
+
 
     public Alarmes(SQLiteDatabase conn)
     {
@@ -34,32 +32,115 @@ public class Alarmes
 
         values.put("_id_PACIENTE",alarme.getIdPaciente());
         values.put("_id_MEDICACAO",alarme.getIdMedicacao());
-        String tempoRestante = MetodosEmComum.horaToString(this.tempoRestante(MetodosEmComum.stringToCalendar(alarme.getTempoRestante())));
-        values.put("TEMPO_RESTANTE",tempoRestante);
-        values.put("E_O_PROXIMO",alarme.geteProximo());
+        values.put("HORA_DO_ALARME",alarme.getHoraDoAlarme());
+        values.put("ORDEM",alarme.getOrdem());
 
         return values;
     }
 
     public void insert(Alarme alarme)
     {
-        if(hasAlarme(alarme))
-        {
-            Log.i("Entrou no","JA TEM");
+        if(this.hasAlarme(alarme))
             update(alarme);
-        }
+        else
+            conn.insertOrThrow("PROXIMO_ALARME",null,this.preencheContentValues(alarme));
 
+        Log.i("Inserindo alarme",""+alarme);
+    }
+
+    public void insertEmOrdem(Alarme alarmeIn)
+    {
+        Log.i("Chamou","insertEmOrdem");
+
+        if(this.hasAlarme(alarmeIn))
+            this.deletarEmOrdem(alarmeIn.getIdPaciente(),alarmeIn.getIdMedicacao());
+
+        Cursor cursor = conn.query("PROXIMO_ALARME",null,null,null,null,null,"ORDEM");
+
+        cursor.moveToFirst();
+
+        if(cursor.getCount()>0)
+        {
+            boolean flagAchouOrdem = false;
+
+            do
+            {
+                Alarme alarme = new Alarme();
+                alarme.setIdPaciente(cursor.getString(cursor.getColumnIndex("_id_PACIENTE")));
+                alarme.setIdMedicacao(cursor.getString(cursor.getColumnIndex("_id_MEDICACAO")));
+                alarme.setHoraDoAlarme(cursor.getString(cursor.getColumnIndex("HORA_DO_ALARME")));
+                alarme.setOrdem(cursor.getInt(cursor.getColumnIndex("ORDEM")));
+
+                Log.i("Alarme do BD",alarme.toString());
+                Log.i("Alarme entrando",alarmeIn.toString());
+
+                if(!flagAchouOrdem)
+                {
+                    if (MetodosEmComum.ajusteData(MetodosEmComum.stringToCalendar(alarmeIn.getHoraDoAlarme())).before(MetodosEmComum.ajusteData(MetodosEmComum.stringToCalendar(alarme.getHoraDoAlarme()))))
+                    {
+                        Log.i("Alarme que ta entrando", "vem antes");
+
+                        alarmeIn.setOrdem(alarme.getOrdem());
+                        this.insert(alarmeIn);
+
+                        alarme.setOrdem(alarme.getOrdem()+1);
+                        this.update(alarme);
+                        flagAchouOrdem = true;
+                    }
+                    else
+                    {
+                        Log.i("Alarme que ta entrando", "vem depois");
+
+                        if(cursor.isLast())
+                        {
+                            Log.i("Cursor", "não tem proximo");
+                            alarmeIn.setOrdem(alarme.getOrdem() + 1);
+                            this.insert(alarmeIn);
+                        }
+                    }
+                }
+                else
+                {
+                    Log.i("", "Adicionando +1 ao get ordem dos proximos");
+                    alarme.setOrdem(alarme.getOrdem()+1);
+                    update(alarme);
+                }
+
+                Log.i("flagAchouOrdem", ""+flagAchouOrdem);
+
+            } while (cursor.moveToNext());
+
+        }
         else
         {
-            conn.insertOrThrow("PROXIMO_ALARME", null, preencheContentValues(alarme));
-            ordenarAlarmes();
-            Cursor cursor = conn.query("PROXIMO_ALARME",null,null,null,null,null,null);
-            Log.i("ALARMES APOS INSERIR",""+cursor.getCount());
+            alarmeIn.setOrdem(1);
+            this.insert(alarmeIn);
+            Log.i("Entrada","direta");
+            Log.i("Alarme entrando",alarmeIn.toString());
         }
+
+        Cursor cursor2 = conn.query("PROXIMO_ALARME",null,null,null,null,null,"ORDEM");
+        cursor2.moveToFirst();
+
+        if(cursor2.getCount()>0)
+        {
+            do {
+                Alarme alarme = new Alarme();
+                alarme.setIdPaciente(cursor2.getString(cursor2.getColumnIndex("_id_PACIENTE")));
+                alarme.setIdMedicacao(cursor2.getString(cursor2.getColumnIndex("_id_MEDICACAO")));
+                alarme.setHoraDoAlarme(cursor2.getString(cursor2.getColumnIndex("HORA_DO_ALARME")));
+                alarme.setOrdem(cursor2.getInt(cursor2.getColumnIndex("ORDEM")));
+
+                Log.i("Alarme", alarme.toString());
+
+            } while (cursor2.moveToNext());
+        }
+
     }
 
     private boolean hasAlarme(Alarme alarme)
     {
+
         Cursor cursor = conn.query("PROXIMO_ALARME",null,"_id_PACIENTE = ? AND _id_MEDICACAO = ?",new String[]{alarme.getIdPaciente(),alarme.getIdMedicacao()},null,null,null);
 
         if (cursor.getCount()==0)
@@ -70,112 +151,59 @@ public class Alarmes
 
     public void update(Alarme alarme)
     {
+        Log.i("Chamou","update");
         conn.update("PROXIMO_ALARME",preencheContentValues(alarme),"_id_PACIENTE = ? AND _id_MEDICACAO = ?",new String[]{alarme.getIdPaciente(),alarme.getIdMedicacao()});
-        Cursor cursor = conn.query("PROXIMO_ALARME",null,null,null,null,null,null);
-        Log.i("ALARMES APOS ATUALIZAR",""+cursor.getCount());
     }
 
     public void delete(String idPac,String idMed)
     {
-        if(idPac.equals(idPaciente)&&idMed.equals(idMedicacao))
-        {
-            idMedicacao = "";
-            idPaciente = "";
-            proxHorario = null;
-        }
-
+        Log.i("Chamou","delete");
         conn.delete("PROXIMO_ALARME","_id_PACIENTE = ? AND _id_MEDICACAO = ?",new String[]{idPac,idMed});
-        ordenarAlarmes();
-
-        Cursor cursor = conn.query("PROXIMO_ALARME",null,null,null,null,null,null);
-        Log.i("ALARMES APOS DELETAR",""+cursor.getCount());
     }
 
-    public void ordenarAlarmes()
+    public void deletarEmOrdem(String idPac,String idMed)
     {
-        Cursor cursor = conn.query("PROXIMO_ALARME",null,null,null,null,null,null);
+        Log.i("Chamou","deletarEmOrdem");
+        Cursor cursor = conn.query("PROXIMO_ALARME",null,"_id_PACIENTE = ? AND _id_MEDICACAO = ?",new String[]{idPac,idMed},null,null,null);
+        cursor.moveToFirst();
+
+        int ordem = cursor.getInt(cursor.getColumnIndex("ORDEM"));
+
+        this.delete(idPac,idMed);
+
+        cursor = conn.query("PROXIMO_ALARME",null,"ORDEM > ?",new String[]{ordem+""},null,null,null);
+
+        Log.i("QTD alarmes > que"+ordem,cursor.getCount()+"");
 
         cursor.moveToFirst();
 
-        Log.i("QTD DE ALARMES",""+cursor.getCount());
-
         if(cursor.getCount()>0)
         {
-
-
-            do {
+            do
+            {
                 Alarme alarme = new Alarme();
                 alarme.setIdPaciente(cursor.getString(cursor.getColumnIndex("_id_PACIENTE")));
                 alarme.setIdMedicacao(cursor.getString(cursor.getColumnIndex("_id_MEDICACAO")));
-                alarme.setTempoRestante(cursor.getString(cursor.getColumnIndex("TEMPO_RESTANTE")));
-                alarme.seteProximo(cursor.getInt(cursor.getColumnIndex("E_O_PROXIMO")));
+                alarme.setHoraDoAlarme(cursor.getString(cursor.getColumnIndex("HORA_DO_ALARME")));
+                alarme.setOrdem(cursor.getInt(cursor.getColumnIndex("ORDEM")));
+                alarme.setOrdem(alarme.getOrdem() - 1);
 
-                Log.i("ALARME ATRIBUTOS",alarme.toString());
+                Log.i("ALARME ATUALIZADO",alarme.toString());
 
-                if (idMedicacao.equals(""))
-                {
-                    Log.i("idMedicacao","vazio");
-                    idMedicacao = alarme.getIdMedicacao();
-                    idPaciente = alarme.getIdPaciente();
-                    proxHorario = MetodosEmComum.stringToCalendar(alarme.getTempoRestante());
-                    this.inverterValorEhProximo(alarme.getIdPaciente(),alarme.getIdMedicacao());
-                    Log.i("ALARME ATRIBUTOS",alarme.toString());
-                } else
-                {
-                    Log.i("Variaveis statics",alarme.toString());
+                this.update(alarme);
 
-                    int resul = proxHorario.compareTo(tempoRestante(MetodosEmComum.stringToCalendar(alarme.getTempoRestante())));
-
-                    Log.i("Resul Compare",""+resul);
-
-                    if (resul < 0)
-                    {
-                        Log.i("ORDENACAO", "TROCOU ALARME!");
-                        this.inverterValorEhProximo(idPaciente,idMedicacao);
-                        idMedicacao = alarme.getIdMedicacao();
-                        idPaciente = alarme.getIdPaciente();
-                        proxHorario = MetodosEmComum.stringToCalendar(alarme.getTempoRestante());
-                        this.inverterValorEhProximo(alarme.getIdPaciente(),alarme.getIdMedicacao());
-                        Log.i("TEMPO SUBTRAIDO", MetodosEmComum.horaToString(proxHorario));
-                    }
-                }
-
-            } while (cursor.moveToNext());
-
+            }while (cursor.moveToNext());
         }
 
-    }
-
-    private void inverterValorEhProximo(String idPaciente,String idMedicacao)
-    {
-        Alarme alarme = null;
-
-        Cursor cursor = conn.query("PROXIMO_ALARME",null,"_id_PACIENTE = ? AND _id_MEDICACAO = ?",new String[]{idPaciente,idMedicacao},null,null,null);
-
-        cursor.moveToFirst();
-
-        if(cursor.getCount()>0)
-        {
-            alarme = new Alarme();
-            alarme.setIdPaciente(cursor.getString(cursor.getColumnIndex("_id_PACIENTE")));
-            alarme.setIdMedicacao(cursor.getString(cursor.getColumnIndex("_id_MEDICACAO")));
-            alarme.setTempoRestante(cursor.getString(cursor.getColumnIndex("TEMPO_RESTANTE")));
-            alarme.seteProximo(cursor.getInt(cursor.getColumnIndex("E_O_PROXIMO")));
-
-            if (alarme.geteProximo() == 0)
-                alarme.seteProximo(1);
-            else
-                alarme.seteProximo(0);
-        }
-
-        this.update(alarme);
     }
 
     public Alarme pegarProximoAlarme()
     {
+        Log.i("Chamou","pegarProximoAlarme");
+
         Alarme alarme = null;
 
-        Cursor cursor = conn.query("PROXIMO_ALARME",null,"E_O_PROXIMO = ?",new String[]{"1"},null,null,null);
+        Cursor cursor = conn.query("PROXIMO_ALARME",null,"ORDEM = ?",new String[]{"1"},null,null,null);
 
         cursor.moveToFirst();
 
@@ -184,8 +212,8 @@ public class Alarmes
             alarme = new Alarme();
             alarme.setIdPaciente(cursor.getString(cursor.getColumnIndex("_id_PACIENTE")));
             alarme.setIdMedicacao(cursor.getString(cursor.getColumnIndex("_id_MEDICACAO")));
-            alarme.setTempoRestante(cursor.getString(cursor.getColumnIndex("TEMPO_RESTANTE")));
-            alarme.seteProximo(cursor.getInt(cursor.getColumnIndex("E_O_PROXIMO")));
+            alarme.setHoraDoAlarme(cursor.getString(cursor.getColumnIndex("HORA_DO_ALARME")));
+            alarme.setOrdem(cursor.getInt(cursor.getColumnIndex("ORDEM")));
         }
 
         Log.i("Alarme Pego",alarme.toString());
@@ -195,8 +223,10 @@ public class Alarmes
 
     public boolean temProximoAlarme()
     {
+        Log.i("Chamou","temProximoAlarme");
+
         boolean ret;
-        Cursor cursor = conn.query("PROXIMO_ALARME",null,"E_O_PROXIMO = ?",new String[]{"1"},null,null,null);
+        Cursor cursor = conn.query("PROXIMO_ALARME",null,"ORDEM = ?",new String[]{"1"},null,null,null);
 
         if(cursor.getCount()>0)
             ret = true;
@@ -208,13 +238,18 @@ public class Alarmes
         return ret;
     }
 
-    private Calendar tempoRestante(Calendar cal)
+    /*private String tempoRestante(String hora)
     {
+        Log.i("Hora que entrou",hora);
         Calendar calendar = Calendar.getInstance();
 
+        Calendar cal = MetodosEmComum.stringToCalendar(hora);
         cal.add(Calendar.MINUTE,-(calendar.get(Calendar.MINUTE)));
         cal.add(Calendar.HOUR_OF_DAY,-(calendar.get(Calendar.HOUR_OF_DAY)));
 
-        return cal;
-    }
+        String ret = MetodosEmComum.horaToString(cal);
+        Log.i("Hora que saiu",ret);
+        return ret;
+    }*/
+
 }

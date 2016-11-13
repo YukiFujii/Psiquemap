@@ -41,8 +41,6 @@ public class DetalheMedicamento extends AppCompatActivity {
     private Button btnConfirmar;
     private Button btnSalvarDetalheMedicamento;
     private Medicamento medicamento;
-    private Medicamento primeiroMedicamentoDaFilaDeAlarmes;
-
     private Calendar ultimoHorario=Calendar.getInstance();
     private TimePickerDialog.OnTimeSetListener t;
 
@@ -80,7 +78,6 @@ public class DetalheMedicamento extends AppCompatActivity {
                 this.medicamento = (Medicamento) bundle.getSerializable("MEDICAMENTO");
 
                 Controle.setIdPaciente(this.medicamento.getIdPaciente());
-                Log.i("Controle idPaciente",Controle.getIdPaciente());
 
                 preencheDados();
 
@@ -96,17 +93,15 @@ public class DetalheMedicamento extends AppCompatActivity {
 
                         if (checkBoxAviso.isChecked())
                         {
-                            Alarme alarme = new Alarme(medicamento.getIdPaciente(),medicamento.getIdMedicacao(),medicamento.getProximoHorario());
-                            alarmes.insert(alarme);
+                            Alarme alarme = new Alarme(Controle.getIdPaciente(),medicamento.getIdMedicacao(),medicamento.getProximoHorario());
+                            Log.i("Criando alarme",alarme.toString());
+                            alarmes.insertEmOrdem(alarme);
 
                             if(alarmes.temProximoAlarme())
                             {
-                                alarme = alarmes.pegarProximoAlarme();
-
-                                primeiroMedicamentoDaFilaDeAlarmes = medicamentos.getMedicamento(alarme.getIdPaciente(), alarme.getIdMedicacao());
-
+                                Log.i("Entrou em","temProximoAlarme");
                                 AlertDialog.Builder dlg = new AlertDialog.Builder(DetalheMedicamento.this);
-                                dlg.setMessage("O alarme foi ativado!");
+                                dlg.setMessage("O alarme foi ativado! Você receberá uma notificação às "+medicamento.getProximoHorario()+" horas.");
                                 dlg.setNeutralButton("OK", null);
                                 dlg.show();
 
@@ -129,12 +124,10 @@ public class DetalheMedicamento extends AppCompatActivity {
                             dlg.setNeutralButton("OK", null);
                             dlg.show();
 
-                            alarmes.delete(medicamento.getIdPaciente(),medicamento.getIdMedicacao());
+                            alarmes.deletarEmOrdem(medicamento.getIdPaciente(),medicamento.getIdMedicacao());
 
                             if(alarmes.temProximoAlarme())
                             {
-                                Alarme proxAlarme = alarmes.pegarProximoAlarme();
-                                primeiroMedicamentoDaFilaDeAlarmes = medicamentos.getMedicamento(proxAlarme.getIdPaciente(),proxAlarme.getIdMedicacao());
                                 chamarAlarme();
                             }
 
@@ -175,12 +168,23 @@ public class DetalheMedicamento extends AppCompatActivity {
 
     public void chamarAlarme()
     {
+        Log.i("Entrou em","chamarAlarme");
+
+        Alarme a = alarmes.pegarProximoAlarme();
+
+        Log.i("ALARME PEGO",a.toString());
+
+        medicamento = medicamentos.getMedicamento(a.getIdPaciente(),a.getIdMedicacao());
+
         Intent intent = new Intent("DISPARAR_ALARME");
-        intent.putExtra("MEDICAMENTO", this.primeiroMedicamentoDaFilaDeAlarmes);
         PendingIntent p = PendingIntent.getBroadcast(this, 0, intent, 0);
 
-        Log.i("Valor de ProxHorario",this.primeiroMedicamentoDaFilaDeAlarmes.getProximoHorario());
-        Calendar c = MetodosEmComum.stringToCalendar(this.primeiroMedicamentoDaFilaDeAlarmes.getProximoHorario());
+        Log.i("Valor de ProxHorario",this.medicamento.getProximoHorario());
+        Calendar c = MetodosEmComum.ajusteData(MetodosEmComum.stringToCalendar(this.medicamento.getProximoHorario()));
+
+        Calendar calendar = Calendar.getInstance();
+        Log.i("GTM ALARME",""+c.getTimeInMillis());
+        Log.i("GTM Agora",""+calendar.getTimeInMillis());
 
         AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarme.set(AlarmManager.RTC_WAKEUP,c.getTimeInMillis(),p);

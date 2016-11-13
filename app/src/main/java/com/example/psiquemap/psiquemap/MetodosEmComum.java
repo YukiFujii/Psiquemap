@@ -73,5 +73,16 @@ public final class MetodosEmComum
         return calendar;
     }
 
+    public static Calendar ajusteData(Calendar calendar)
+    {
+        Calendar cal = Calendar.getInstance();
+
+        if(calendar.getTimeInMillis()<cal.getTimeInMillis())
+            calendar.add(Calendar.DATE,1);
+
+        return calendar;
+    }
+
+
 
 }
