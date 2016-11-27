@@ -1,5 +1,7 @@
 package com.example.psiquemap.psiquemap;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.example.psiquemap.psiquemap.sql.DataBase;
@@ -81,6 +83,25 @@ public final class MetodosEmComum
             calendar.add(Calendar.DATE,1);
 
         return calendar;
+    }
+
+    public static SQLiteDatabase conexaoBD(Context context)
+    {
+        SQLiteDatabase conn = null;
+
+        try {
+
+            DataBase dataBase = new DataBase(context);
+            conn = dataBase.getWritableDatabase();
+
+        }
+        catch (Exception ex)
+        {
+            ex.getStackTrace();
+        }
+
+        return conn;
+
     }
 
 

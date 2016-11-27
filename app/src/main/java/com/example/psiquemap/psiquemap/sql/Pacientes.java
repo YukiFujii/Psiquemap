@@ -22,7 +22,7 @@ public class Pacientes
         this.conn = conn;
     }
 
-    private ContentValues preencheContentValues(Paciente paciente)
+    private static ContentValues preencheContentValues(Paciente paciente)
     {
         ContentValues values = new ContentValues();
 
@@ -43,6 +43,18 @@ public class Pacientes
     }
 
     public void insert(Paciente paciente)
+    {
+        Cursor cursor = conn.query("PACIENTE",null,null,null,null,null,null);
+
+        int qtdPacientes = cursor.getCount();
+
+        if(qtdPacientes==0)
+            conn.insertOrThrow("PACIENTE", null, preencheContentValues(paciente));
+        else
+            conn.update("PACIENTE",preencheContentValues(paciente),null,null);
+    }
+
+    public static void insert(Paciente paciente,SQLiteDatabase conn)
     {
         Cursor cursor = conn.query("PACIENTE",null,null,null,null,null,null);
 

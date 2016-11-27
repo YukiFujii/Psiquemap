@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
@@ -15,7 +14,7 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.example.psiquemap.psiquemap.entidades.Controle;
+
 import com.example.psiquemap.psiquemap.sql.Controles;
 import com.example.psiquemap.psiquemap.sql.DataBase;
 import com.example.psiquemap.psiquemap.sql.Feedbacks;
@@ -44,7 +43,6 @@ public class MainActivity extends AppCompatActivity
     private PerguntasDoQuestionarioMINI perguntasDoQuestionarioMINI;
     private Feedbacks feedbacks;
     private Controles controles;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

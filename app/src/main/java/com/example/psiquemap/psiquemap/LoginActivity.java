@@ -1,20 +1,21 @@
  package com.example.psiquemap.psiquemap;
 
-    import android.content.Context;
+    import android.annotation.SuppressLint;
     import android.content.Intent;
     import android.database.sqlite.SQLiteDatabase;
     import android.support.v7.app.AlertDialog;
     import android.support.v7.app.AppCompatActivity;
     import android.os.Bundle;
-    import android.view.Menu;
-    import android.view.MenuInflater;
-    import android.view.MenuItem;
+    import android.util.Log;
     import android.view.View;
-    import android.widget.ArrayAdapter;
     import android.widget.Button;
     import android.widget.EditText;
 
+    import com.example.psiquemap.psiquemap.comunicacao.HttpClient;
+    import com.example.psiquemap.psiquemap.comunicacao.LoginWS;
     import com.example.psiquemap.psiquemap.entidades.Controle;
+    import com.example.psiquemap.psiquemap.entidades.Dados;
+    import com.example.psiquemap.psiquemap.entidades.Login;
     import com.example.psiquemap.psiquemap.entidades.Medicamento;
     import com.example.psiquemap.psiquemap.entidades.Paciente;
     import com.example.psiquemap.psiquemap.entidades.PerguntaDoQuestionario;
@@ -26,8 +27,7 @@
     import com.example.psiquemap.psiquemap.sql.PerguntasDoDiario;
     import com.example.psiquemap.psiquemap.sql.PerguntasDoQuestionarioMINI;
     import com.example.psiquemap.psiquemap.sql.Sintomas;
-
-    import java.util.ArrayList;
+    import com.google.gson.Gson;
 
  public class LoginActivity extends AppCompatActivity
  {
@@ -91,10 +91,21 @@
      // ------------------------- GAMBIARRA --------------------------------------------------------
      private boolean acessoPermitido()
      {
-         String email = this.editEmail.getText().toString();
-         String senha = this.editSenha.getText().toString();
+         boolean acesso = false;
 
-         if(email.equals("y") && senha.equals("u"))
+         Login login = new Login();
+
+         login.setEmail(this.editEmail.getText().toString());
+         login.setSenha(this.editSenha.getText().toString());
+
+         Gson gson = new Gson();
+         String loginJson = gson.toJson(login);
+
+         this.chamarLoginWS(loginJson);
+
+         acesso = this.inserirPaciente();
+
+         /*if(email.equals("y") && senha.equals("u"))
          {
              inserirPaciente(email);
              return true;
@@ -104,20 +115,35 @@
          {
              inserirPaciente(email);
              return true;
+         }*/
+
+         return acesso;
+     }
+
+     @SuppressLint("NewApi")
+     private void chamarLoginWS(final String dataJson)
+     {
+         new LoginWS(this,dataJson).start();
+
+         try {
+             Thread.sleep(3000);
+         } catch (InterruptedException e) {
+             e.printStackTrace();
          }
 
-         return false;
      }
 
 
-     private void inserirPaciente(String email)
+     private boolean inserirPaciente()
      {
+         boolean ret = false;
+
          if(this.conexaoBD())
          {
              controles = new Controles(conn);
              pacientes = new Pacientes(conn);
 
-             switch (email)
+             /*switch (email)
              {
                  case "y":
                                 paciente = new Paciente("000001","Alcino Hiroyuki Fujii Júnior","R. Anisio Perissinotto",
@@ -151,6 +177,17 @@
 
                  default:
                      break;
+             }*/
+
+             paciente = pacientes.getPaciente();
+
+             if (paciente==null)
+                 ret = false;
+             else
+             {
+                 controle = new Controle(paciente.getId());
+                 controles.insert(controle);
+                 ret = true;
              }
 
          }
@@ -161,6 +198,8 @@
              dlg.setNeutralButton("OK", null);
              dlg.show();
          }
+
+         return ret;
 
      }
 
