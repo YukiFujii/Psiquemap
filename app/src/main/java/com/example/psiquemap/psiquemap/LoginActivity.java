@@ -1,6 +1,7 @@
  package com.example.psiquemap.psiquemap;
 
     import android.annotation.SuppressLint;
+    import android.content.Context;
     import android.content.Intent;
     import android.database.sqlite.SQLiteDatabase;
     import android.support.v7.app.AlertDialog;
@@ -11,7 +12,6 @@
     import android.widget.Button;
     import android.widget.EditText;
 
-    import com.example.psiquemap.psiquemap.comunicacao.LoginWS;
     import com.example.psiquemap.psiquemap.entidades.Controle;
     import com.example.psiquemap.psiquemap.entidades.Login;
     import com.example.psiquemap.psiquemap.entidades.Medicamento;
@@ -41,6 +41,8 @@
      private Paciente paciente;
      private Pacientes pacientes;
 
+     public static Context getApplicationContext;
+     public static Context thisContext;
 
      @Override
      protected void onCreate(Bundle savedInstanceState)
@@ -51,23 +53,27 @@
          editEmail = (EditText)findViewById(R.id.editEmailLogin);
          editSenha = (EditText)findViewById(R.id.editSenhaLogin);
          btnLogin = (Button)findViewById(R.id.btnLogin);
+         getApplicationContext = getApplicationContext();
+         thisContext = this;
 
      }
 
-     public void chamarTelaInicial(View v)
+     public void btnLoginWS(View v)
      {
-         if(this.acessoPermitido()) {
-             Intent it = new Intent(this, MainActivity.class);
-             startActivityForResult(it, 0);
-             finish();
-         }
-         else
-         {
-             AlertDialog.Builder dlg = new AlertDialog.Builder(this);
-             dlg.setMessage("Login incorreto! Por favor, verifique se seus dados estão corretos.");
-             dlg.setNeutralButton("OK",null);
-             dlg.show();
-         }
+         Login login = new Login();
+
+         login.setEmail(this.editEmail.getText().toString());
+         login.setSenha(this.editSenha.getText().toString());
+
+         Gson gson = new Gson();
+         String loginJson = gson.toJson(login);
+
+         Log.i("LoginToJson",loginJson);
+
+         login = gson.fromJson(loginJson,Login.class);
+
+         Log.i("JsonToLogin",login.getEmail()+" : "+login.getSenha());
+
      }
 
      private boolean conexaoBD()
@@ -91,19 +97,7 @@
      {
          boolean acesso = false;
 
-         Login login = new Login();
 
-         login.setEmail(this.editEmail.getText().toString());
-         login.setSenha(this.editSenha.getText().toString());
-
-         Gson gson = new Gson();
-         String loginJson = gson.toJson(login);
-
-         Log.i("LoginToJson",loginJson);
-
-         login = gson.fromJson(loginJson,Login.class);
-
-         Log.i("JsonToLogin",login.getEmail()+" : "+login.getSenha());
 
          //this.chamarLoginWS(loginJson);
 
@@ -124,29 +118,7 @@
          return acesso;
      }
 
-     public void btnlogin(View view)
-     {
-         String restUrl = "http://192.168.0.15:8080/psiquemap-ws/login";
-         new LoginOperation().execute(restUrl);
-
-     }
-
-
-     @SuppressLint("NewApi")
-     private void chamarLoginWS(final String dataJson)
-     {
-         new LoginWS(this,dataJson).start();
-
-         try {
-             Thread.sleep(3000);
-         } catch (InterruptedException e) {
-             e.printStackTrace();
-         }
-
-     }
-
-
-     private boolean inserirPaciente()
+     private boolean inserirDados()
      {
          boolean ret = false;
 
@@ -155,17 +127,17 @@
              controles = new Controles(conn);
              pacientes = new Pacientes(conn);
 
-             /*switch (email)
+             Paciente paciente = pacientes.getPaciente();
+             controle = new Controle(paciente.getId());
+             controles.insert(controle);
+
+             switch (paciente.getEmail())
              {
                  case "y":
-                                paciente = new Paciente("000001","Alcino Hiroyuki Fujii Júnior","R. Anisio Perissinotto",
-                                302,"13140-538","22/04/1992","yuki@hotmail.com","48.612.219-0","405.049.548-14","(19) 99246-6557",
-                                "Hiroyuki","123456");
 
                      controle = new Controle(paciente.getId());
                      controles.insert(controle);
 
-                     pacientes.insert(paciente);
                      this.inserirPerguntasNoDiario();
                      this.inserirPerguntasNoQuestionarioMINI();
                      this.inserirSintomas();
@@ -189,17 +161,6 @@
 
                  default:
                      break;
-             }*/
-
-             paciente = pacientes.getPaciente();
-
-             if (paciente==null)
-                 ret = false;
-             else
-             {
-                 controle = new Controle(paciente.getId());
-                 controles.insert(controle);
-                 ret = true;
              }
 
          }
