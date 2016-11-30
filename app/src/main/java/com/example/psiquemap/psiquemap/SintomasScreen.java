@@ -1,5 +1,6 @@
 package com.example.psiquemap.psiquemap;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,6 +17,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import com.example.psiquemap.psiquemap.entidades.Sintoma;
 import com.example.psiquemap.psiquemap.entidades.SintomaSentido;
+import com.example.psiquemap.psiquemap.sql.Controles;
 import com.example.psiquemap.psiquemap.sql.DataBase;
 import com.example.psiquemap.psiquemap.sql.Sintomas;
 import com.example.psiquemap.psiquemap.sql.SintomasSentidos;
@@ -36,6 +38,9 @@ public class SintomasScreen extends AppCompatActivity {
     private Sintomas sintomas;
     private SintomasSentidos sintomasSentidos;
 
+    public static Context getApplicationContext;
+    public static Context thisContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +52,8 @@ public class SintomasScreen extends AppCompatActivity {
         this.lstSintomas = (ListView) findViewById(R.id.lstSintomas);
         this.btnAdicionar = (Button) findViewById(R.id.btnAdicionar);
         this.txtSintomas = (AutoCompleteTextView) findViewById(R.id.txtSintomas);
+        getApplicationContext = getApplicationContext();
+        thisContext = this;
 
         if(this.conexaoBD())
         {
@@ -104,8 +111,6 @@ public class SintomasScreen extends AppCompatActivity {
 
             Sintoma sintoma = sintomas.getSintomaPorNome(this.nomeSintoma);
 
-            boolean sintomaJaAdd = false;
-
             if (sintomasSentidos.hasSintoma(sintoma))
             {
                 txtSintomas.setText("");
@@ -121,6 +126,8 @@ public class SintomasScreen extends AppCompatActivity {
                 SintomasSentidos sintomasSentidos = new SintomasSentidos(this.conn);
 
                 sintomasSentidos.insert(sintomaSentido);
+
+                Controles.setFlagSintomas(MetodosEmComum.getIdPaciente(this),1);
 
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

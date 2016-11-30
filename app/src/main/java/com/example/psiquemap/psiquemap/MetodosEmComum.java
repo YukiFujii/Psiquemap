@@ -4,6 +4,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.example.psiquemap.psiquemap.entidades.Controle;
+import com.example.psiquemap.psiquemap.entidades.Dados;
+import com.example.psiquemap.psiquemap.sql.Controles;
 import com.example.psiquemap.psiquemap.sql.DataBase;
 
 import java.text.DateFormat;
@@ -18,6 +21,8 @@ import java.util.Date;
 
 public final class MetodosEmComum
 {
+    public static final String urlLogin = "http://192.168.0.22:8080/psiquemap-ws/login";
+
     public static String getDataAtual()
     {
         Calendar calendar = Calendar.getInstance();
@@ -101,6 +106,18 @@ public final class MetodosEmComum
         }
 
         return conn;
+    }
+
+    public static String getIdPaciente(Context context)
+    {
+        Controles controles = new Controles(MetodosEmComum.conexaoBD(context));
+        String ret = controles.getIdPaciente();
+        return ret;
+    }
+
+    public Dados getJsonDados(Context context)
+    {
+        Controles controles = new Controles(MetodosEmComum.conexaoBD(context));
 
     }
 

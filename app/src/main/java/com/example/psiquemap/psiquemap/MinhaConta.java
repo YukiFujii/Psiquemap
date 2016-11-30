@@ -1,5 +1,6 @@
 package com.example.psiquemap.psiquemap;
 
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -7,11 +8,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.psiquemap.psiquemap.entidades.Controle;
 import com.example.psiquemap.psiquemap.entidades.Paciente;
+import com.example.psiquemap.psiquemap.sql.Controles;
 import com.example.psiquemap.psiquemap.sql.DataBase;
 import com.example.psiquemap.psiquemap.sql.Pacientes;
 
@@ -32,6 +36,9 @@ public class MinhaConta extends AppCompatActivity {
 
     private Button btnSalvar;
 
+    public static Context getApplicationContext;
+    public static Context thisContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +54,8 @@ public class MinhaConta extends AppCompatActivity {
         editSenha = (EditText) findViewById(R.id.editSenha);
         editConfirmarSenha = (EditText) findViewById(R.id.editConfirmarSenha);
         btnSalvar = (Button) findViewById(R.id.btnSalvar);
+        getApplicationContext = getApplicationContext();
+        thisContext = this;
 
         if(conexaoBD())
         {
@@ -86,7 +95,15 @@ public class MinhaConta extends AppCompatActivity {
         if(camposOk())
         {
             this.updateCampos();
-            this.pacientes.update(this.paciente);
+            Paciente noBanco = pacientes.getPaciente();
+
+            if(!noBanco.equals(this.paciente))
+            {
+                this.pacientes.update(this.paciente);
+                Controles.setFlagPaciente(this.paciente.getId(),1);
+                Log.i("FlagPaciente","alterado");
+            }
+
             finish();
         }
         else

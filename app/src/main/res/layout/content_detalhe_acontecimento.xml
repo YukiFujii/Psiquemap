@@ -134,7 +134,7 @@
             android:layout_height="wrap_content"
             android:text="OK"
             android:id="@+id/btnOkAcontecimento"
-            android:onClick="btnOkAcontecimento"/>
+            android:onClick="salvarAcontecimento"/>
     </LinearLayout>
 
 </LinearLayout>

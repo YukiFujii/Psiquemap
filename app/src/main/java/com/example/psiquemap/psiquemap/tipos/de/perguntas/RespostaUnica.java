@@ -1,5 +1,6 @@
 package com.example.psiquemap.psiquemap.tipos.de.perguntas;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ import com.example.psiquemap.psiquemap.InicioQuestionario;
 import com.example.psiquemap.psiquemap.MainActivity;
 import com.example.psiquemap.psiquemap.MetodosEmComum;
 import com.example.psiquemap.psiquemap.R;
+import com.example.psiquemap.psiquemap.entidades.Controle;
+import com.example.psiquemap.psiquemap.entidades.Paciente;
 import com.example.psiquemap.psiquemap.entidades.PerguntaDoQuestionario;
 import com.example.psiquemap.psiquemap.entidades.RespostaQuestionarioDiario;
 import com.example.psiquemap.psiquemap.entidades.RespostaQuestionarioMINI;
@@ -52,6 +55,9 @@ public class RespostaUnica extends AppCompatActivity {
     private PerguntasDoQuestionarioMINI perguntasDoQuestionarioMINI;
     private RespostasQuestionarioMINI respostasQuestionarioMINI;
 
+    public static Context getApplicationContext;
+    public static Context thisContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +70,8 @@ public class RespostaUnica extends AppCompatActivity {
         txtMarcadorRespoUnica = (TextView)findViewById(R.id.txtMarcadorRespUnica);
         txtPerguntaUnica = (TextView)findViewById(R.id.txtPerguntaRespUnica);
         rgrRespUnica = (RadioGroup)findViewById(R.id.rgrRespUnica);
+        getApplicationContext = getApplicationContext();
+        thisContext = this;
 
         if(this.conexaoBD())
         {
@@ -158,6 +166,8 @@ public class RespostaUnica extends AppCompatActivity {
                     this.respostaQuestionarioMINI = new RespostaQuestionarioMINI(controles.getIdPaciente(),MetodosEmComum.getDataAtual(),this.pergunta.getPerguntaId(),this.pergunta.getQuestao(),this.resposta);
                     this.respostasQuestionarioMINI.insert(this.respostaQuestionarioMINI);
 
+                    Controles.setFlagQuestMini(this,MetodosEmComum.getIdPaciente(this),1);
+
                     this.pergunta = this.perguntasDoQuestionarioMINI.getPerguntaQuestionarioMINI();
 
                     if(this.pergunta==null)
@@ -198,8 +208,10 @@ public class RespostaUnica extends AppCompatActivity {
                     this.pergunta.setFoiRespondida(1);
                     this.perguntasDoDiario.update(this.pergunta);
 
-                    this.respostaQuestionarioDiario = new RespostaQuestionarioDiario(controles.getIdPaciente(),MetodosEmComum.getDataAtual(),this.pergunta.getPerguntaId(),this.resposta);
+                    this.respostaQuestionarioDiario = new RespostaQuestionarioDiario(MetodosEmComum.getIdPaciente(this),MetodosEmComum.getDataAtual(),this.pergunta.getPerguntaId(),this.resposta);
                     this.respostasQuestionarioDiario.insert(this.respostaQuestionarioDiario);
+
+                    Controles.setFlagQuestDiario(this,MetodosEmComum.getIdPaciente(this),1);
 
                     this.pergunta = this.perguntasDoDiario.getPerguntaDiario();
 

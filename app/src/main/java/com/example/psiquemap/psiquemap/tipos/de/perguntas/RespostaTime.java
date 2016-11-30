@@ -148,6 +148,8 @@ public class RespostaTime extends AppCompatActivity {
                     this.respostaQuestionarioMINI = new RespostaQuestionarioMINI(controles.getIdPaciente(),MetodosEmComum.getDataAtual(),this.pergunta.getPerguntaId(),this.pergunta.getQuestao(),this.resposta);
                     this.respostasQuestionarioMINI.insert(this.respostaQuestionarioMINI);
 
+                    Controles.setFlagQuestMini(this,MetodosEmComum.getIdPaciente(this),1);
+
                     this.pergunta = this.perguntasDoQuestionarioMINI.getPerguntaQuestionarioMINI();
 
                     if(this.pergunta==null)
@@ -193,6 +195,8 @@ public class RespostaTime extends AppCompatActivity {
 
                     this.respostaQuestionarioDiario = new RespostaQuestionarioDiario(controles.getIdPaciente(),MetodosEmComum.getDataAtual(),this.pergunta.getPerguntaId(),this.resposta);
                     this.respostasQuestionarioDiario.insert(this.respostaQuestionarioDiario);
+
+                    Controles.setFlagQuestDiario(this,MetodosEmComum.getIdPaciente(this),1);
 
                     this.pergunta = this.perguntasDoDiario.getPerguntaDiario();
 

@@ -5,8 +5,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.psiquemap.psiquemap.LoginActivity;
+import com.example.psiquemap.psiquemap.MetodosEmComum;
+import com.example.psiquemap.psiquemap.entidades.Controle;
 import com.example.psiquemap.psiquemap.entidades.Dados;
 import com.example.psiquemap.psiquemap.entidades.Login;
+import com.example.psiquemap.psiquemap.entidades.Paciente;
+import com.example.psiquemap.psiquemap.sql.Controles;
+import com.example.psiquemap.psiquemap.sql.Pacientes;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -21,7 +26,7 @@ import java.net.URL;
  * Created by yuki on 28/11/16.
  */
 
-public class SendPostRequest extends AsyncTask<Login,Void,String> {
+public class enviarLogin extends AsyncTask<Login,Void,String> {
 
     protected void onPreExecute() {
     }
@@ -30,7 +35,7 @@ public class SendPostRequest extends AsyncTask<Login,Void,String> {
 
         try {
 
-            URL url = new URL("http://192.168.0.22:8080/psiquemap-ws/login"); // here is your URL path
+            URL url = new URL(MetodosEmComum.urlLogin); // here is your URL path
 
             //Login login = new Login("y","123");
             Login login = arg0[0];
@@ -55,6 +60,8 @@ public class SendPostRequest extends AsyncTask<Login,Void,String> {
             OutputStream os = conn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(os, "UTF-8"));
+
+            Log.i("loginJson", loginJson);
             writer.write(loginJson);
 
             writer.flush();
@@ -80,6 +87,8 @@ public class SendPostRequest extends AsyncTask<Login,Void,String> {
 
             in.close();
 
+            Log.i("Recebido", sb.toString());
+
             String statusJson;
 
             try
@@ -87,6 +96,16 @@ public class SendPostRequest extends AsyncTask<Login,Void,String> {
                 Dados dados;
 
                 dados = gson.fromJson(sb.toString(), Dados.class);
+
+                Paciente paciente = dados.getPaciente();
+                Pacientes pacientes = new Pacientes(MetodosEmComum.conexaoBD(LoginActivity.thisContext));
+                pacientes.insert(paciente);
+
+                Controle controle = new Controle(paciente);
+                Controles controles= new Controles(MetodosEmComum.conexaoBD(LoginActivity.thisContext));
+                controles.insert(controle);
+
+                Log.i("Insert","ok");
 
                 statusJson = "true";
 
@@ -108,10 +127,11 @@ public class SendPostRequest extends AsyncTask<Login,Void,String> {
     @Override
     protected void onPostExecute(String result) {
 
+        Log.i("Result",result);
 
-        if(result.equals(true))
+        if(result.equals("true"))
         {
-            Toast.makeText(LoginActivity.getApplicationContext, "Bem-vindo!",
+            Toast.makeText(LoginActivity.getApplicationContext, "Login efetuado com sucesso!",
                     Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(LoginActivity.getApplicationContext, "Não foi possível conectar-se ao servidor! Por favor, tente mais tarde.",

@@ -1,27 +1,23 @@
 package com.example.psiquemap.psiquemap;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.example.psiquemap.psiquemap.entidades.Acontecimento;
-import com.example.psiquemap.psiquemap.entidades.Evento;
 import com.example.psiquemap.psiquemap.sql.Acontecimentos;
+import com.example.psiquemap.psiquemap.sql.Controles;
 import com.example.psiquemap.psiquemap.sql.DataBase;
-import com.example.psiquemap.psiquemap.sql.PerguntasDoDiario;
 
 public class AcontecimentoDoDiario extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
@@ -37,6 +33,9 @@ public class AcontecimentoDoDiario extends AppCompatActivity implements AdapterV
     private DataBase dataBase;
     private SQLiteDatabase conn;
     private Acontecimentos acontecimentos;
+
+    public static Context getApplicationContext;
+    public static Context thisContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +54,12 @@ public class AcontecimentoDoDiario extends AppCompatActivity implements AdapterV
         CustomAdapter customAdapter=new CustomAdapter(getApplicationContext(),this.emojis,this.nomeSentimentos);
         this.spnAcontecimento.setAdapter(customAdapter);
 
+        getApplicationContext = getApplicationContext();
+        thisContext = this;
+
     }
 
-    public void salvarEvento(View view)
+    public void salvarAcontecimento(View view)
     {
         if(this.validacaoDeCampos())
         {
@@ -68,6 +70,8 @@ public class AcontecimentoDoDiario extends AppCompatActivity implements AdapterV
                 Acontecimento acontecimento = new Acontecimento(this.sentimentoDoAcontecimento, this.editTitulo.getText().toString(), this.editDescricao.getText().toString());
 
                 acontecimentos.insert(acontecimento);
+
+                Controles.setFlagAcontecimento(MetodosEmComum.getIdPaciente(this),1);
 
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -86,7 +90,7 @@ public class AcontecimentoDoDiario extends AppCompatActivity implements AdapterV
                 };
 
                 AlertDialog.Builder dlg = new AlertDialog.Builder(this);
-                dlg.setMessage("Deseja adicionar outro evento?").setPositiveButton("Sim", dialogClickListener).setNegativeButton("Não", dialogClickListener);
+                dlg.setMessage("Deseja adicionar outro acontecimento?").setPositiveButton("Sim", dialogClickListener).setNegativeButton("Não", dialogClickListener);
                 dlg.show();
             }
             else

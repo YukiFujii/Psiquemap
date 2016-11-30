@@ -1,17 +1,17 @@
  package com.example.psiquemap.psiquemap;
 
-    import android.annotation.SuppressLint;
     import android.content.Context;
     import android.content.Intent;
     import android.database.sqlite.SQLiteDatabase;
-    import android.support.v7.app.AlertDialog;
     import android.support.v7.app.AppCompatActivity;
     import android.os.Bundle;
     import android.util.Log;
     import android.view.View;
     import android.widget.Button;
     import android.widget.EditText;
+    import android.widget.Toast;
 
+    import com.example.psiquemap.psiquemap.comunicacao.enviarLogin;
     import com.example.psiquemap.psiquemap.entidades.Controle;
     import com.example.psiquemap.psiquemap.entidades.Login;
     import com.example.psiquemap.psiquemap.entidades.Medicamento;
@@ -25,7 +25,6 @@
     import com.example.psiquemap.psiquemap.sql.PerguntasDoDiario;
     import com.example.psiquemap.psiquemap.sql.PerguntasDoQuestionarioMINI;
     import com.example.psiquemap.psiquemap.sql.Sintomas;
-    import com.google.gson.Gson;
 
  public class LoginActivity extends AppCompatActivity
  {
@@ -65,14 +64,43 @@
          login.setEmail(this.editEmail.getText().toString());
          login.setSenha(this.editSenha.getText().toString());
 
-         Gson gson = new Gson();
-         String loginJson = gson.toJson(login);
+         new enviarLogin().execute(login);
 
-         Log.i("LoginToJson",loginJson);
+         if (this.conexaoBD())
+         {
+             controles = new Controles(conn);
+             pacientes = new Pacientes(conn);
 
-         login = gson.fromJson(loginJson,Login.class);
+             try {
 
-         Log.i("JsonToLogin",login.getEmail()+" : "+login.getSenha());
+                 for(int i=0;i<50;i++)
+                 {
+                     Thread.sleep(100);
+                     if(controles.hasControle())
+                        break;
+                     Log.i("Contador",i+"");
+                 }
+
+                 if(this.inserirDados())
+                 {
+                     Intent it = new Intent(this,MainActivity.class);
+                     startActivityForResult(it,0);
+                     finish();
+                 }
+                 else {
+                     Toast.makeText(LoginActivity.getApplicationContext, "Dados incorretos! Por favor, verifique e tente novamente.",
+                             Toast.LENGTH_LONG).show();
+                 }
+
+             } catch (InterruptedException e) {
+                 e.printStackTrace();
+             }
+         } else {
+             android.app.AlertDialog.Builder dlg = new android.app.AlertDialog.Builder(this);
+             dlg.setMessage("Erro ao conectar com banco!");
+             dlg.setNeutralButton("OK", null);
+             dlg.show();
+         }
 
      }
 
@@ -93,83 +121,44 @@
      }
 
      // ------------------------- GAMBIARRA --------------------------------------------------------
-     private boolean acessoPermitido()
-     {
-         boolean acesso = false;
-
-
-
-         //this.chamarLoginWS(loginJson);
-
-         //acesso = this.inserirPaciente();
-
-         /*if(email.equals("y") && senha.equals("u"))
-         {
-             inserirPaciente(email);
-             return true;
-         }
-
-         if (email.equals("ronaldo@gmail.com") && senha.equals("123"))
-         {
-             inserirPaciente(email);
-             return true;
-         }*/
-
-         return acesso;
-     }
 
      private boolean inserirDados()
      {
          boolean ret = false;
 
-         if(this.conexaoBD())
-         {
-             controles = new Controles(conn);
-             pacientes = new Pacientes(conn);
+         try {
+                 Paciente paciente = pacientes.getPaciente();
+                 Log.i("Paciente", paciente.getId());
 
-             Paciente paciente = pacientes.getPaciente();
-             controle = new Controle(paciente.getId());
-             controles.insert(controle);
+                 switch (paciente.getEmail()) {
+                     case "y":
 
-             switch (paciente.getEmail())
-             {
-                 case "y":
+                         this.inserirPerguntasNoDiario();
+                         this.inserirPerguntasNoQuestionarioMINI();
+                         this.inserirSintomas();
+                         this.inserirMedicacao();
+                         break;
 
-                     controle = new Controle(paciente.getId());
-                     controles.insert(controle);
+                     case "ronaldo@gmail.com":
+                         paciente = new Paciente("000002", "Ronaldo Teodoro", "R. Campinas",
+                                 100, "13000-000", "22/04/1986", "ronaldo@gmail.com", "12.501.108-9", "394.938.437-03", "(19) 99999-9999",
+                                 "123", "234567");
 
-                     this.inserirPerguntasNoDiario();
-                     this.inserirPerguntasNoQuestionarioMINI();
-                     this.inserirSintomas();
-                     this.inserirMedicacao();
-                     break;
+                         this.inserirPerguntasNoDiario();
+                         this.inserirPerguntasNoQuestionarioMINI();
+                         this.inserirSintomas();
+                         this.inserirMedicacao();
+                         break;
 
-                 case "ronaldo@gmail.com":
-                                paciente = new Paciente("000002","Ronaldo Teodoro","R. Campinas",
-                                100,"13000-000","22/04/1986","ronaldo@gmail.com","12.501.108-9","394.938.437-03","(19) 99999-9999",
-                                "123","234567");
+                     default:
+                         break;
+                 }
 
-                     controle = new Controle(paciente.getId());
-                     controles.insert(controle);
-
-                     pacientes.insert(paciente);
-                     this.inserirPerguntasNoDiario();
-                     this.inserirPerguntasNoQuestionarioMINI();
-                     this.inserirSintomas();
-                     this.inserirMedicacao();
-                     break;
-
-                 default:
-                     break;
-             }
-
+                 ret=true;
          }
-         else
+         catch (Exception e)
          {
-             android.app.AlertDialog.Builder dlg = new android.app.AlertDialog.Builder(this);
-             dlg.setMessage("Erro ao conectar com banco!");
-             dlg.setNeutralButton("OK", null);
-             dlg.show();
+             ret=false;
          }
 
          return ret;

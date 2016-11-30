@@ -1,5 +1,6 @@
 package com.example.psiquemap.psiquemap;
 
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -34,6 +35,9 @@ public class FeedbackScreen extends AppCompatActivity implements AdapterView.OnI
     private Feedbacks feedbacks;
     private Controles controles;
 
+    public static Context getApplicationContext;
+    public static Context thisContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +48,8 @@ public class FeedbackScreen extends AppCompatActivity implements AdapterView.OnI
         editObservacao = (EditText)findViewById(R.id.editObservacao);
         btnSalvarFeedback = (Button)findViewById(R.id.btnSalvarFeedback);
         spnFeedback = (Spinner)findViewById(R.id.spnFeedback);
+        getApplicationContext = getApplicationContext();
+        thisContext = this;
 
         spnFeedback.setOnItemSelectedListener(this);
 
@@ -106,6 +112,8 @@ public class FeedbackScreen extends AppCompatActivity implements AdapterView.OnI
         {
             Feedback feedback = new Feedback(controles.getIdPaciente(),this.classificacaoFeedback,this.editObservacao.getText().toString());
             feedbacks.insert(feedback);
+            Controles.setFlagFeedback(MetodosEmComum.getIdPaciente(this),1);
+
             finish();
         }
         else

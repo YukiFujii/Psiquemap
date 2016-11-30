@@ -112,7 +112,7 @@
             android:layout_height="wrap_content"
             android:text="Salvar"
             android:id="@+id/btnSalvarEvento"
-            android:onClick="salvarEvento"/>
+            android:onClick="salvarAcontecimento"/>
     </LinearLayout>
 
 </LinearLayout>

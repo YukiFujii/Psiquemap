@@ -197,8 +197,14 @@ public class ScriptSQL {
     {
         StringBuilder sqlBuilder = new StringBuilder();
 
-        sqlBuilder.append("CREATE TABLE IF NOT EXISTS CONTROLE(                 ");
-        sqlBuilder.append("_id_PACIENTE                           VARCHAR (15)  ");
+        sqlBuilder.append("CREATE TABLE IF NOT EXISTS CONTROLE(                   ");
+        sqlBuilder.append("_id_PACIENTE                            VARCHAR (15) , ");
+        sqlBuilder.append("FLAG_PACIENTE                                INTEGER , ");
+        sqlBuilder.append("FLAG_QUEST_DIARIO                            INTEGER , ");
+        sqlBuilder.append("FLAG_ACONTECIMENTO                           INTEGER , ");
+        sqlBuilder.append("FLAG_QUEST_MINI                              INTEGER , ");
+        sqlBuilder.append("FLAG_SINTOMAS                                INTEGER , ");
+        sqlBuilder.append("FLAG_FEEDBACK                                INTEGER   ");
         sqlBuilder.append(");");
 
         return sqlBuilder.toString();

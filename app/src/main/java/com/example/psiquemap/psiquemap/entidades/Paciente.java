@@ -1,5 +1,7 @@
 package com.example.psiquemap.psiquemap.entidades;
 
+import android.util.Log;
+
 /**
  * Created by yuki on 23/10/16.
  */
@@ -132,5 +134,57 @@ public class Paciente
 
     public void setCns(String cns) {
         this.cns = cns;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if(obj == this)
+            return true;
+
+        if (obj == null)
+            return false;
+
+        if(!(obj instanceof Paciente))
+            return false;
+
+        Paciente paciente = (Paciente) obj;
+
+        if(!paciente.getId().equals(this.getId()))
+            return false;
+
+        if(!paciente.getNomeCompleto().equals(this.getNomeCompleto()))
+            return false;
+
+        if(!paciente.getRua().equals(this.getRua()))
+            return false;
+
+        if(paciente.getNumero()!=this.getNumero())
+            return false;
+
+        if(!paciente.getCep().equals(this.getCep()))
+            return false;
+
+        if(!paciente.getDataNasc().equals(this.getDataNasc()))
+            return false;
+
+        if(!paciente.getEmail().equals(this.getEmail()))
+            return false;
+
+        if(!paciente.getRg().equals(this.getRg()))
+            return false;
+
+        if(!paciente.getCpf().equals(this.getCpf()))
+            return false;
+
+        if(!paciente.getTelefone().equals(this.getTelefone()))
+            return false;
+
+        if(!paciente.getSenha().equals(this.getSenha()))
+            return false;
+
+        if(!paciente.getCns().equals(this.getCns()))
+            return false;
+
+        return true;
     }
 }
