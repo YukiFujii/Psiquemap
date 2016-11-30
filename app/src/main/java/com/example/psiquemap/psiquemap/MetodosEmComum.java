@@ -6,8 +6,14 @@ import android.util.Log;
 
 import com.example.psiquemap.psiquemap.entidades.Controle;
 import com.example.psiquemap.psiquemap.entidades.Dados;
+import com.example.psiquemap.psiquemap.sql.Acontecimentos;
 import com.example.psiquemap.psiquemap.sql.Controles;
 import com.example.psiquemap.psiquemap.sql.DataBase;
+import com.example.psiquemap.psiquemap.sql.Feedbacks;
+import com.example.psiquemap.psiquemap.sql.Pacientes;
+import com.example.psiquemap.psiquemap.sql.RespostasQuestionarioDiario;
+import com.example.psiquemap.psiquemap.sql.RespostasQuestionarioMINI;
+import com.example.psiquemap.psiquemap.sql.SintomasSentidos;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -22,6 +28,7 @@ import java.util.Date;
 public final class MetodosEmComum
 {
     public static final String urlLogin = "http://192.168.0.22:8080/psiquemap-ws/login";
+    public static final String urlEnviar = "http://192.168.0.22:8080/psiquemap-ws/receber";
 
     public static String getDataAtual()
     {
@@ -115,9 +122,51 @@ public final class MetodosEmComum
         return ret;
     }
 
-    public Dados getJsonDados(Context context)
+    public static Dados getDados(Context context)
     {
-        Controles controles = new Controles(MetodosEmComum.conexaoBD(context));
+        SQLiteDatabase conn = MetodosEmComum.conexaoBD(context);
+
+        Dados dados = new Dados();
+
+        dados.setControle(Controles.getControle(MetodosEmComum.getIdPaciente(context)));
+
+        if(dados.getControle().getFlagPaciente()==1)
+        {
+            Pacientes pacientes =  new Pacientes(conn);
+            dados.setPaciente(pacientes.getPaciente());
+        }
+
+        if (dados.getControle().getFlagQuestDiario()==1)
+        {
+            RespostasQuestionarioDiario respostasQuestionarioDiario = new RespostasQuestionarioDiario(conn);
+            dados.setRespostasQuestDiario(respostasQuestionarioDiario.getRespostasQuestDiario(dados.getControle().getIdPaciente()));
+        }
+
+        if (dados.getControle().getFlagAcontecimento()==1)
+        {
+            Acontecimentos acontecimentos = new Acontecimentos(conn);
+            dados.setAcontecimentos(acontecimentos.getAcontecimentos(dados.getControle().getIdPaciente()));
+        }
+
+        if (dados.getControle().getFlagQuestMini()==1)
+        {
+            RespostasQuestionarioMINI respostasQuestionarioMINI = new RespostasQuestionarioMINI(conn);
+            dados.setRespostaQuestMini(respostasQuestionarioMINI.getRespostasQuestMini(dados.getControle().getIdPaciente()));
+        }
+
+        if (dados.getControle().getFlagSintomas()==1)
+        {
+            SintomasSentidos sintomasSentidos = new SintomasSentidos(conn);
+            dados.setSintomas(sintomasSentidos.getSintomasSentidos(dados.getControle().getIdPaciente()));
+        }
+
+        if (dados.getControle().getFlagFeedback()==1)
+        {
+            Feedbacks feedbacks = new Feedbacks(conn);
+            dados.setFeedbacks(feedbacks.getFeedbacks(dados.getControle().getIdPaciente()));
+        }
+
+        return dados;
 
     }
 

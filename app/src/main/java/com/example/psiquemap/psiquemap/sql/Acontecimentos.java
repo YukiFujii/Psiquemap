@@ -9,8 +9,10 @@ import android.widget.ArrayAdapter;
 import com.example.psiquemap.psiquemap.MetodosEmComum;
 import com.example.psiquemap.psiquemap.entidades.Acontecimento;
 import com.example.psiquemap.psiquemap.entidades.PerguntaDoQuestionario;
+import com.example.psiquemap.psiquemap.entidades.RespostaQuestionarioDiario;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -49,7 +51,7 @@ public class Acontecimentos
     {
         ArrayAdapter<Acontecimento> acontecimentos = new ArrayAdapter<Acontecimento>(context,android.R.layout.simple_list_item_1);
 
-        Cursor cursor = conn.query("ACONTECIMENTOS",null,"_id_PACIENTE = ? AND DATA = ?",new String[]{Pacientes.getIdPaciente(),MetodosEmComum.getDataAtual()},null,null,null);
+        Cursor cursor = conn.query("ACONTECIMENTOS",null,"_id_PACIENTE = ? AND DATA = ?",new String[]{MetodosEmComum.getIdPaciente(context),MetodosEmComum.getDataAtual()},null,null,null);
 
         cursor.moveToFirst();
 
@@ -71,6 +73,37 @@ public class Acontecimentos
         }
 
         return acontecimentos;
+
+    }
+
+    public ArrayList<Acontecimento> getAcontecimentos(String idPaciente)
+    {
+        ArrayList<Acontecimento> ret = null;
+
+        Cursor cursor = conn.query("ACONTECIMENTOS",null,"_id_PACIENTE = ?",new String[]{idPaciente},null,null,null);
+
+        if(cursor.getCount()>0)
+        {
+            cursor.moveToFirst();
+
+            ret = new ArrayList<>();
+
+            do
+            {
+                Acontecimento resp = new Acontecimento();
+                resp.setIdPaciente(cursor.getString(cursor.getColumnIndex("_id_PACIENTE")));
+                resp.setData(cursor.getString(cursor.getColumnIndex("DATA")));
+                resp.setHora(cursor.getString(cursor.getColumnIndex("HORA")));
+                resp.setSentimento(cursor.getString(cursor.getColumnIndex("SENTIMENTO")));
+                resp.setTitulo(cursor.getString(cursor.getColumnIndex("TITULO")));
+                resp.setDescricao(cursor.getString(cursor.getColumnIndex("DESCRICAO")));
+                ret.add(resp);
+
+            }while (cursor.moveToNext());
+
+        }
+
+        return ret;
 
     }
 

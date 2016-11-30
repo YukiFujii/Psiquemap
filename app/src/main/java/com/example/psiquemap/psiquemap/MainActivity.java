@@ -1,5 +1,6 @@
 package com.example.psiquemap.psiquemap;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,10 +16,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 
+import com.example.psiquemap.psiquemap.comunicacao.EnviarDados;
+import com.example.psiquemap.psiquemap.entidades.Dados;
 import com.example.psiquemap.psiquemap.sql.Controles;
 import com.example.psiquemap.psiquemap.sql.DataBase;
 import com.example.psiquemap.psiquemap.sql.Feedbacks;
 import com.example.psiquemap.psiquemap.sql.PerguntasDoQuestionarioMINI;
+import com.google.gson.Gson;
 
 import java.util.Calendar;
 
@@ -44,6 +48,9 @@ public class MainActivity extends AppCompatActivity
     private Feedbacks feedbacks;
     private Controles controles;
 
+    public static Context getApplicationContext;
+    public static Context thisContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +69,8 @@ public class MainActivity extends AppCompatActivity
         txtSintomas = (TextView) findViewById(R.id.txtSintomas);
         txtFeedback = (TextView) findViewById(R.id.txtFeedback);
         txtNotificacoes = (TextView) findViewById(R.id.txtNotificacoes);
+        getApplicationContext = getApplicationContext();
+        thisContext = this;
 
         if(this.conexaoBD())
         {
@@ -125,6 +134,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.mni_logout:
                 logout();
                 break;
+
+            case R.id.mni_enviar:
+                enviarInformacoes();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -136,6 +149,13 @@ public class MainActivity extends AppCompatActivity
         Intent it = new Intent(this, LoginActivity.class);
         startActivityForResult(it, 0);
         finish();
+    }
+
+    private void enviarInformacoes()
+    {
+        Dados dados = MetodosEmComum.getDados(this);
+
+        new EnviarDados().execute(dados);
     }
 
     private boolean conexaoBD()

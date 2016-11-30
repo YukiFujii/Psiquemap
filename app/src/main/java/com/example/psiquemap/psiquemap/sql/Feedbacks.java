@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.psiquemap.psiquemap.entidades.Feedback;
 
+import java.util.ArrayList;
+
 /**
  * Created by yuki on 08/11/16.
  */
@@ -64,5 +66,33 @@ public class Feedbacks
     public void delete(String idPaciente,String data)
     {
         conn.delete("FEEDBACK","_id_PACIENTE = ? AND DATA = ?",new String[]{idPaciente,data});
+    }
+
+    public ArrayList<Feedback> getFeedbacks(String idPaciente)
+    {
+        ArrayList<Feedback> ret = null;
+
+        Cursor cursor = conn.query("FEEDBACK",null,"_id_PACIENTE = ?",new String[]{idPaciente},null,null,null);
+
+        if(cursor.getCount()>0)
+        {
+            cursor.moveToFirst();
+
+            ret = new ArrayList<>();
+
+            do
+            {
+                Feedback resp = new Feedback();
+                resp.setIdPaciente(cursor.getString(cursor.getColumnIndex("_id_PACIENTE")));
+                resp.setData(cursor.getString(cursor.getColumnIndex("DATA")));
+                resp.setSentimento(cursor.getString(cursor.getColumnIndex("SENTIMENTO")));
+                resp.setObservacao(cursor.getString(cursor.getColumnIndex("OBSERVACAO")));
+                ret.add(resp);
+
+            }while (cursor.moveToNext());
+
+        }
+
+        return ret;
     }
 }

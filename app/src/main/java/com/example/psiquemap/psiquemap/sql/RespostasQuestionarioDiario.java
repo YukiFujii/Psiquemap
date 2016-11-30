@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.example.psiquemap.psiquemap.entidades.RespostaQuestionarioDiario;
 
+import java.util.ArrayList;
+
 /**
  * Created by yuki on 11/11/16.
  */
@@ -72,6 +74,35 @@ public class RespostasQuestionarioDiario
     {
         conn.delete("RESPOSTAS_DO_QUESTIONARIO_DIARIO","_id_PACIENTE = ? AND DATA = ? AND _id_PERGUNTA = ?",
                 new String[]{idPaciente,data,questao});
+    }
+
+    public ArrayList<RespostaQuestionarioDiario> getRespostasQuestDiario(String idPaciente)
+    {
+        ArrayList<RespostaQuestionarioDiario> ret = null;
+
+        Cursor cursor = conn.query("RESPOSTAS_DO_QUESTIONARIO_DIARIO",null,"_id_PACIENTE = ?",new String[]{idPaciente},null,null,null);
+
+        if(cursor.getCount()>0)
+        {
+            cursor.moveToFirst();
+
+            ret = new ArrayList<>();
+
+            do
+            {
+                RespostaQuestionarioDiario resp = new RespostaQuestionarioDiario();
+                resp.setIdPaciente(cursor.getString(cursor.getColumnIndex("_id_PACIENTE")));
+                resp.setData(cursor.getString(cursor.getColumnIndex("DATA")));
+                resp.setIdPergunta(cursor.getString(cursor.getColumnIndex("_id_PERGUNTA")));
+                resp.setResposta(cursor.getString(cursor.getColumnIndex("RESPOSTA")));
+                ret.add(resp);
+
+            }while (cursor.moveToNext());
+
+        }
+
+        return ret;
+
     }
 
 }

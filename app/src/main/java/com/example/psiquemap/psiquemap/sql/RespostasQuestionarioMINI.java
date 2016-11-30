@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.example.psiquemap.psiquemap.entidades.RespostaQuestionarioMINI;
 
+import java.util.ArrayList;
+
 /**
  * Created by yuki on 11/11/16.
  */
@@ -73,6 +75,36 @@ public class RespostasQuestionarioMINI
     {
         conn.delete("RESPOSTAS_DO_QUESTIONARIO_MINI","_id_PACIENTE = ? AND DATA = ? AND _id_MODULO = ? AND QUESTAO = ?",
                 new String[]{idPaciente,data,idModulo,questao});
+    }
+
+    public ArrayList<RespostaQuestionarioMINI> getRespostasQuestMini(String idPaciente)
+    {
+        ArrayList<RespostaQuestionarioMINI> ret = null;
+
+        Cursor cursor = conn.query("RESPOSTAS_DO_QUESTIONARIO_MINI",null,"_id_PACIENTE = ?",new String[]{idPaciente},null,null,null);
+
+        if(cursor.getCount()>0)
+        {
+            cursor.moveToFirst();
+
+            ret = new ArrayList<>();
+
+            do
+            {
+                RespostaQuestionarioMINI resp = new RespostaQuestionarioMINI();
+                resp.setIdPaciente(cursor.getString(cursor.getColumnIndex("_id_PACIENTE")));
+                resp.setData(cursor.getString(cursor.getColumnIndex("DATA")));
+                resp.setIdModulo(cursor.getString(cursor.getColumnIndex("_id_MODULO")));
+                resp.setQuestao(cursor.getString(cursor.getColumnIndex("QUESTAO")));
+                resp.setResposta(cursor.getString(cursor.getColumnIndex("RESPOSTA")));
+                ret.add(resp);
+
+            }while (cursor.moveToNext());
+
+        }
+
+        return ret;
+
     }
 
 }

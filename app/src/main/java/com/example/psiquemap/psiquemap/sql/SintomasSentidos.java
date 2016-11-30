@@ -11,6 +11,8 @@ import com.example.psiquemap.psiquemap.MetodosEmComum;
 import com.example.psiquemap.psiquemap.entidades.Sintoma;
 import com.example.psiquemap.psiquemap.entidades.SintomaSentido;
 
+import java.util.ArrayList;
+
 /**
  * Created by yuki on 08/11/16.
  */
@@ -97,5 +99,34 @@ public class SintomasSentidos {
         }
 
         return sintomasSentidos;
+    }
+
+    public ArrayList<SintomaSentido> getSintomasSentidos(String idPaciente)
+    {
+        ArrayList<SintomaSentido> ret = null;
+
+        Cursor cursor = conn.query("SINTOMAS_SENTIDOS",null,"_id_PACIENTE = ?",new String[]{idPaciente},null,null,null);
+
+        if(cursor.getCount()>0)
+        {
+            cursor.moveToFirst();
+
+            ret = new ArrayList<>();
+
+            do
+            {
+                SintomaSentido resp = new SintomaSentido();
+                resp.setIdPaciente(cursor.getString(cursor.getColumnIndex("_id_PACIENTE")));
+                resp.setIdCategoria(cursor.getString(cursor.getColumnIndex("_id_CATEGORIA")));
+                resp.setIdSintoma(cursor.getString(cursor.getColumnIndex("_id_SINTOMA")));
+                resp.setNome(cursor.getString(cursor.getColumnIndex("NOME")));
+                resp.setData(cursor.getString(cursor.getColumnIndex("DATA")));
+                ret.add(resp);
+
+            }while (cursor.moveToNext());
+
+        }
+
+        return ret;
     }
 }

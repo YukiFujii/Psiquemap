@@ -5,10 +5,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.psiquemap.psiquemap.LoginActivity;
+import com.example.psiquemap.psiquemap.MainActivity;
 import com.example.psiquemap.psiquemap.MetodosEmComum;
 import com.example.psiquemap.psiquemap.entidades.Controle;
 import com.example.psiquemap.psiquemap.entidades.Dados;
-import com.example.psiquemap.psiquemap.entidades.Login;
 import com.example.psiquemap.psiquemap.entidades.Paciente;
 import com.example.psiquemap.psiquemap.sql.Controles;
 import com.example.psiquemap.psiquemap.sql.Pacientes;
@@ -26,29 +26,21 @@ import java.net.URL;
  * Created by yuki on 28/11/16.
  */
 
-public class enviarLogin extends AsyncTask<Login,Void,String> {
+public class EnviarDados extends AsyncTask<Dados,Void,String> {
 
     protected void onPreExecute() {
     }
 
-    protected String doInBackground(Login... arg0) {
+    protected String doInBackground(Dados... arg0) {
 
         try {
 
-            URL url = new URL(MetodosEmComum.urlLogin); // here is your URL path
+            URL url = new URL(MetodosEmComum.urlEnviar); // here is your URL path
 
-            //Login login = new Login("y","123");
-            Login login = arg0[0];
-            Log.i("email", login.getEmail());
-            Log.i("senha", login.getSenha());
+            Dados dados = arg0[0];
 
             Gson gson = new Gson();
-            String loginJson = gson.toJson(login);
-
-                /*JSONObject postDataParams = new JSONObject();
-                postDataParams.put("name", "abc");
-                postDataParams.put("email", "abc@gmail.com");
-                Log.e("params",postDataParams.toString());*/
+            String dadosJson = gson.toJson(dados);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(15000 /* milliseconds */);
@@ -61,16 +53,12 @@ public class enviarLogin extends AsyncTask<Login,Void,String> {
             BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(os, "UTF-8"));
 
-            Log.i("loginJson", loginJson);
-            writer.write(loginJson);
+            writer.write(dadosJson);
+            Log.i("Json enviado",dadosJson);
 
             writer.flush();
             writer.close();
             os.close();
-
-            //int responseCode = conn.getResponseCode();
-
-            //if (responseCode == HttpsURLConnection.HTTP_OK) {
 
             BufferedReader in = new BufferedReader(new
                     InputStreamReader(
@@ -87,25 +75,24 @@ public class enviarLogin extends AsyncTask<Login,Void,String> {
 
             in.close();
 
-            Log.i("Recebido", sb.toString());
+            Log.i("Resposta", "recebida");
 
             String statusJson;
 
             try
             {
-                Dados dados;
 
                 dados = gson.fromJson(sb.toString(), Dados.class);
 
-                Paciente paciente = dados.getPaciente();
+                /*Paciente paciente = dados.getPaciente();
                 Pacientes pacientes = new Pacientes(MetodosEmComum.conexaoBD(LoginActivity.thisContext));
                 pacientes.insert(paciente);
 
                 Controle controle = new Controle(paciente);
                 Controles controles= new Controles(MetodosEmComum.conexaoBD(LoginActivity.thisContext));
-                controles.insert(controle);
+                controles.insert(controle);*/
 
-                Log.i("Insert","ok");
+                Log.i("Controle",dados.getControle().toString());
 
                 statusJson = "true";
 
@@ -131,10 +118,10 @@ public class enviarLogin extends AsyncTask<Login,Void,String> {
 
         if(result.equals("true"))
         {
-            Toast.makeText(LoginActivity.getApplicationContext, "Login efetuado com sucesso!",
+            Toast.makeText(MainActivity.getApplicationContext, "Dados enviados com sucesso!",
                     Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(LoginActivity.getApplicationContext, "Não foi possível conectar-se ao servidor! Por favor, tente mais tarde.",
+            Toast.makeText(MainActivity.getApplicationContext, "Não foi possível conectar-se ao servidor! Por favor, tente mais tarde.",
                     Toast.LENGTH_LONG).show();
         }
     }

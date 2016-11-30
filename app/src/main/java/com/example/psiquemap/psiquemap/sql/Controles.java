@@ -93,7 +93,7 @@ public class Controles {
         return ret;
     }
 
-    private static Controle getControle (String idPaciente)
+    public static Controle getControle (String idPaciente)
     {
         Controle controle = null;
 

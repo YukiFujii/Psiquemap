@@ -11,7 +11,7 @@
     import android.widget.EditText;
     import android.widget.Toast;
 
-    import com.example.psiquemap.psiquemap.comunicacao.enviarLogin;
+    import com.example.psiquemap.psiquemap.comunicacao.EnviarLogin;
     import com.example.psiquemap.psiquemap.entidades.Controle;
     import com.example.psiquemap.psiquemap.entidades.Login;
     import com.example.psiquemap.psiquemap.entidades.Medicamento;
@@ -64,7 +64,7 @@
          login.setEmail(this.editEmail.getText().toString());
          login.setSenha(this.editSenha.getText().toString());
 
-         new enviarLogin().execute(login);
+         new EnviarLogin().execute(login);
 
          if (this.conexaoBD())
          {
