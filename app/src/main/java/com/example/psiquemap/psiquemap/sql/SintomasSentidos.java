@@ -121,6 +121,8 @@ public class SintomasSentidos {
                 resp.setIdSintoma(cursor.getString(cursor.getColumnIndex("_id_SINTOMA")));
                 resp.setNome(cursor.getString(cursor.getColumnIndex("NOME")));
                 resp.setData(cursor.getString(cursor.getColumnIndex("DATA")));
+
+                Log.i("Sintoma sentido",resp.getNome());
                 ret.add(resp);
 
             }while (cursor.moveToNext());

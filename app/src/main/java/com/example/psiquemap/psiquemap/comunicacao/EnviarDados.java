@@ -4,14 +4,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.psiquemap.psiquemap.LoginActivity;
 import com.example.psiquemap.psiquemap.MainActivity;
 import com.example.psiquemap.psiquemap.MetodosEmComum;
 import com.example.psiquemap.psiquemap.entidades.Controle;
 import com.example.psiquemap.psiquemap.entidades.Dados;
-import com.example.psiquemap.psiquemap.entidades.Paciente;
-import com.example.psiquemap.psiquemap.sql.Controles;
-import com.example.psiquemap.psiquemap.sql.Pacientes;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -78,11 +74,12 @@ public class EnviarDados extends AsyncTask<Dados,Void,String> {
             Log.i("Resposta", "recebida");
 
             String statusJson;
+            Controle controle = null;
 
             try
             {
 
-                dados = gson.fromJson(sb.toString(), Dados.class);
+                controle = gson.fromJson(sb.toString(), Controle.class);
 
                 /*Paciente paciente = dados.getPaciente();
                 Pacientes pacientes = new Pacientes(MetodosEmComum.conexaoBD(LoginActivity.thisContext));
@@ -92,7 +89,7 @@ public class EnviarDados extends AsyncTask<Dados,Void,String> {
                 Controles controles= new Controles(MetodosEmComum.conexaoBD(LoginActivity.thisContext));
                 controles.insert(controle);*/
 
-                Log.i("Controle",dados.getControle().toString());
+                Log.i("Controle",controle.toString());
 
                 statusJson = "true";
 

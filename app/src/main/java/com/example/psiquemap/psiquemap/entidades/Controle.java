@@ -11,7 +11,7 @@ public final class Controle
     private int flagQuestDiario;
     private int flagAcontecimento;
     private int flagQuestMini;
-    private int flagSintomas;
+    private int flagSintomasSentido;
     private int flagFeedback;
 
     public Controle(Paciente idPaciente)
@@ -69,11 +69,11 @@ public final class Controle
     }
 
     public int getFlagSintomas() {
-        return flagSintomas;
+        return flagSintomasSentido;
     }
 
     public void setFlagSintomas(int flagSintomas) {
-        this.flagSintomas = flagSintomas;
+        this.flagSintomasSentido = flagSintomas;
     }
 
     public int getFlagFeedback() {

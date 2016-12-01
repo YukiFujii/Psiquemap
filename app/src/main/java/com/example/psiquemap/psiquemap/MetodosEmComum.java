@@ -27,8 +27,8 @@ import java.util.Date;
 
 public final class MetodosEmComum
 {
-    public static final String urlLogin = "http://192.168.0.22:8080/psiquemap-ws/login";
-    public static final String urlEnviar = "http://192.168.0.22:8080/psiquemap-ws/receber";
+    public static final String urlLogin = "http://192.168.0.16:8080/psiquemap-ws/login";
+    public static final String urlEnviar = "http://192.168.0.16:8080/psiquemap-ws/receber";
 
     public static String getDataAtual()
     {
