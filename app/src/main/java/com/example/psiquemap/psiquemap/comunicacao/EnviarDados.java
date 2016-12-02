@@ -1,13 +1,20 @@
 package com.example.psiquemap.psiquemap.comunicacao;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.psiquemap.psiquemap.LoginActivity;
 import com.example.psiquemap.psiquemap.MainActivity;
 import com.example.psiquemap.psiquemap.MetodosEmComum;
 import com.example.psiquemap.psiquemap.entidades.Controle;
 import com.example.psiquemap.psiquemap.entidades.Dados;
+import com.example.psiquemap.psiquemap.sql.Medicamentos;
+import com.example.psiquemap.psiquemap.sql.Pacientes;
+import com.example.psiquemap.psiquemap.sql.PerguntasDoDiario;
+import com.example.psiquemap.psiquemap.sql.PerguntasDoQuestionarioMINI;
+import com.example.psiquemap.psiquemap.sql.Sintomas;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -74,24 +81,17 @@ public class EnviarDados extends AsyncTask<Dados,Void,String> {
             Log.i("Resposta", "recebida");
 
             String statusJson;
-            Controle controle = null;
 
             try
             {
 
-                controle = gson.fromJson(sb.toString(), Controle.class);
+                dados = gson.fromJson(sb.toString(), Dados.class);
+                Log.i("Controle",dados.getControle().toString());
 
-                /*Paciente paciente = dados.getPaciente();
-                Pacientes pacientes = new Pacientes(MetodosEmComum.conexaoBD(LoginActivity.thisContext));
-                pacientes.insert(paciente);
-
-                Controle controle = new Controle(paciente);
-                Controles controles= new Controles(MetodosEmComum.conexaoBD(LoginActivity.thisContext));
-                controles.insert(controle);*/
-
-                Log.i("Controle",controle.toString());
-
-                statusJson = "true";
+                if(MetodosEmComum.rebecerDados(dados))
+                    statusJson = "true";
+                else
+                    statusJson = "false";
 
             } catch (Exception e) {
                 statusJson = "false";

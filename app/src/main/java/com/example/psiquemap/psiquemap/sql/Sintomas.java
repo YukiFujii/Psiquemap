@@ -16,14 +16,14 @@ import com.example.psiquemap.psiquemap.entidades.Sintoma;
 
 public class Sintomas
 {
-    private SQLiteDatabase conn;
+    private static SQLiteDatabase conn;
 
     public Sintomas(SQLiteDatabase conn)
     {
         this.conn = conn;
     }
 
-    private ContentValues preencheContentValues(Sintoma sintoma)
+    private static ContentValues preencheContentValues(Sintoma sintoma)
     {
         ContentValues values = new ContentValues();
 
@@ -34,15 +34,17 @@ public class Sintomas
         return values;
     }
 
-    public void insert(Sintoma sintoma)
+    public static void insert(Sintoma sintoma,SQLiteDatabase c)
     {
-        if(this.hasSintoma(sintoma))
-            this.update(sintoma);
+        conn = c;
+
+        if(hasSintoma(sintoma))
+            update(sintoma);
         else
             conn.insertOrThrow("SINTOMAS", null, preencheContentValues(sintoma));
     }
 
-    public boolean hasSintoma(Sintoma sintoma)
+    public static boolean hasSintoma(Sintoma sintoma)
     {
         Cursor cursor = conn.query("SINTOMAS",null,"_id_CATEGORIA = ? AND _id_SINTOMA = ?",new String[]{sintoma.getIdCategoria(),sintoma.getIdSintoma()},null,null,null);
 
@@ -52,7 +54,13 @@ public class Sintomas
             return true;
     }
 
-    public void update(Sintoma sintoma)
+    public static void update(Sintoma sintoma,SQLiteDatabase c)
+    {
+        conn =c;
+        conn.update("SINTOMAS",preencheContentValues(sintoma),"_id_SINTOMA = ?",new String[]{sintoma.getIdSintoma()});
+    }
+
+    private static void update(Sintoma sintoma)
     {
         conn.update("SINTOMAS",preencheContentValues(sintoma),"_id_SINTOMA = ?",new String[]{sintoma.getIdSintoma()});
     }

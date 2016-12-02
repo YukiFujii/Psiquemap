@@ -93,21 +93,13 @@ public class EnviarLogin extends AsyncTask<Login,Void,String> {
 
             try
             {
-                Dados dados;
+                Dados dados = gson.fromJson(sb.toString(), Dados.class);
+                Log.i("Controle",dados.getControle().toString());
 
-                dados = gson.fromJson(sb.toString(), Dados.class);
-
-                Paciente paciente = dados.getPaciente();
-                Pacientes pacientes = new Pacientes(MetodosEmComum.conexaoBD(LoginActivity.thisContext));
-                pacientes.insert(paciente);
-
-                Controle controle = new Controle(paciente);
-                Controles controles= new Controles(MetodosEmComum.conexaoBD(LoginActivity.thisContext));
-                controles.insert(controle);
-
-                Log.i("Insert","ok");
-
-                statusJson = "true";
+                if(MetodosEmComum.rebecerDados(dados))
+                    statusJson = "true";
+                else
+                    statusJson = "false";
 
             } catch (Exception e) {
                 statusJson = "false";

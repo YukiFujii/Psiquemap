@@ -13,9 +13,14 @@ public class Dados
     private ArrayList<SintomaSentido> sintomas;
     private ArrayList<Feedback> feedbacks;
 
-	public Dados() {
+    private ArrayList<PerguntaDoQuestionario> perguntasQuestDiario;
+    private ArrayList<PerguntaDoQuestionario> perguntasQuestMini;
+    private ArrayList<Sintoma> todosSintomas;
+    private ArrayList<Medicamento> medicamentos;
 
-	}
+    public Dados() {
+
+    }
 
     public Controle getControle() {
         return controle;
@@ -25,13 +30,13 @@ public class Dados
         this.controle = controle;
     }
 
-	public Paciente getPaciente() {
-		return paciente;
-	}
+    public Paciente getPaciente() {
+        return paciente;
+    }
 
-	public void setPaciente(Paciente paciente) {
-		this.paciente = paciente;
-	}
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
+    }
 
     public ArrayList<RespostaQuestionarioDiario> getRespostasQuestDiario() {
         return respostasQuestDiario;
@@ -71,5 +76,37 @@ public class Dados
 
     public void setFeedbacks(ArrayList<Feedback> feedbacks) {
         this.feedbacks = feedbacks;
+    }
+
+    public ArrayList<PerguntaDoQuestionario> getPerguntasQuestDiario() {
+        return perguntasQuestDiario;
+    }
+
+    public void setPerguntasQuestDiario(ArrayList<PerguntaDoQuestionario> perguntasQuestDiario) {
+        this.perguntasQuestDiario = perguntasQuestDiario;
+    }
+
+    public ArrayList<PerguntaDoQuestionario> getPerguntasQuestMini() {
+        return perguntasQuestMini;
+    }
+
+    public void setPerguntasQuestMini(ArrayList<PerguntaDoQuestionario> perguntasQuestMini) {
+        this.perguntasQuestMini = perguntasQuestMini;
+    }
+
+    public ArrayList<Sintoma> getTodosSintomas() {
+        return todosSintomas;
+    }
+
+    public void setTodosSintomas(ArrayList<Sintoma> todosSintomas) {
+        this.todosSintomas = todosSintomas;
+    }
+
+    public ArrayList<Medicamento> getMedicamentos() {
+        return medicamentos;
+    }
+
+    public void setMedicamentos(ArrayList<Medicamento> medicamentos) {
+        this.medicamentos = medicamentos;
     }
 }

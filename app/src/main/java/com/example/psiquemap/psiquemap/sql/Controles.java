@@ -111,6 +111,10 @@ public class Controles {
             controle.setFlagQuestMini(cursor.getInt(cursor.getColumnIndex("FLAG_QUEST_MINI")));
             controle.setFlagSintomas(cursor.getInt(cursor.getColumnIndex("FLAG_SINTOMAS")));
             controle.setFlagFeedback(cursor.getInt(cursor.getColumnIndex("FLAG_FEEDBACK")));
+            controle.setFlagPergDiario(cursor.getInt(cursor.getColumnIndex("FLAG_PERG_DIARIO")));
+            controle.setFlagPergMini(cursor.getInt(cursor.getColumnIndex("FLAG_PERG_MINI")));
+            controle.setFlagTodosSintomas(cursor.getInt(cursor.getColumnIndex("FLAG_TODOS_SINTOMAS")));
+            controle.setFlagMedicamento(cursor.getInt(cursor.getColumnIndex("FLAG_MEDICAMENTO")));
         }
 
         return controle;
@@ -172,6 +176,46 @@ public class Controles {
 
         Controle controle = getControle(idPaciente);
         controle.setFlagFeedback(valor);
+        Log.i("Controle",controle.toString());
+        insert(controle);
+    }
+
+    public static void setFlagPergDiario(String idPaciente,int valor)
+    {
+        conn = MetodosEmComum.conexaoBD(MetodosEmComum.escolherContext());
+
+        Controle controle = getControle(idPaciente);
+        controle.setFlagPergDiario(valor);
+        Log.i("Controle",controle.toString());
+        insert(controle);
+    }
+
+    public static void setFlagPergMini(String idPaciente,int valor)
+    {
+        conn = MetodosEmComum.conexaoBD(MetodosEmComum.escolherContext());
+
+        Controle controle = getControle(idPaciente);
+        controle.setFlagPergMini(valor);
+        Log.i("Controle",controle.toString());
+        insert(controle);
+    }
+
+    public static void setFlagTodosSintomas(String idPaciente,int valor)
+    {
+        conn = MetodosEmComum.conexaoBD(MetodosEmComum.escolherContext());
+
+        Controle controle = getControle(idPaciente);
+        controle.setFlagTodosSintomas(valor);
+        Log.i("Controle",controle.toString());
+        insert(controle);
+    }
+
+    public static void setFlagMedicamento(String idPaciente,int valor)
+    {
+        conn = MetodosEmComum.conexaoBD(MetodosEmComum.escolherContext());
+
+        Controle controle = getControle(idPaciente);
+        controle.setFlagMedicamento(valor);
         Log.i("Controle",controle.toString());
         insert(controle);
     }

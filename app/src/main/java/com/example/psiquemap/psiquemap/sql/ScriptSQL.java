@@ -36,7 +36,7 @@ public class ScriptSQL {
         StringBuilder sqlBuilder = new StringBuilder();
 
         sqlBuilder.append("CREATE TABLE IF NOT EXISTS PERGUNTAS_DO_DIARIO ( ");
-        sqlBuilder.append("_id                             VARCHAR (15)");
+        sqlBuilder.append("_id                              VARCHAR (3)");
         sqlBuilder.append("PRIMARY KEY                               , ");
         sqlBuilder.append("PERGUNTA                    VARCHAR (500) , ");
         sqlBuilder.append("TIPO_PERGUNTA                VARCHAR (30) , ");
@@ -66,7 +66,7 @@ public class ScriptSQL {
         StringBuilder sqlBuilder = new StringBuilder();
 
         sqlBuilder.append("CREATE TABLE IF NOT EXISTS PERGUNTAS_DO_QUESTIONARIO_MINI ( ");
-        sqlBuilder.append("_id                            VARCHAR (1), ");
+        sqlBuilder.append("_id                           VARCHAR (1) , ");
         sqlBuilder.append("MODULO                       VARCHAR (50) , ");
         sqlBuilder.append("QUESTAO                       VARCHAR (3) , ");
         sqlBuilder.append("PERGUNTA                    VARCHAR (500) , ");
@@ -204,7 +204,11 @@ public class ScriptSQL {
         sqlBuilder.append("FLAG_ACONTECIMENTO                           INTEGER , ");
         sqlBuilder.append("FLAG_QUEST_MINI                              INTEGER , ");
         sqlBuilder.append("FLAG_SINTOMAS                                INTEGER , ");
-        sqlBuilder.append("FLAG_FEEDBACK                                INTEGER   ");
+        sqlBuilder.append("FLAG_FEEDBACK                                INTEGER , ");
+        sqlBuilder.append("FLAG_PERG_DIARIO                             INTEGER , ");
+        sqlBuilder.append("FLAG_PERG_MINI                               INTEGER , ");
+        sqlBuilder.append("FLAG_TODOS_SINTOMAS                          INTEGER , ");
+        sqlBuilder.append("FLAG_MEDICAMENTO                             INTEGER   ");
         sqlBuilder.append(");");
 
         return sqlBuilder.toString();

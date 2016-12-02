@@ -241,7 +241,7 @@ public class DetalheMedicamento extends AppCompatActivity {
     {
         editUltimoHorario.setText(MetodosEmComum.horaToString(calendar));
         medicamento.setUltimoHorario(MetodosEmComum.horaToString(calendar));
-        medicamentos.update(this.medicamento);
+        medicamentos.update(this.medicamento,MetodosEmComum.conexaoBD(this));
     }
 
     public void btnConfirmar(View view)
@@ -274,7 +274,7 @@ public class DetalheMedicamento extends AppCompatActivity {
         proximoHorario.add(Calendar.HOUR_OF_DAY,medicamento.getIntervalo());
 
         medicamento.setProximoHorario(MetodosEmComum.horaToString(proximoHorario));
-        medicamentos.update(medicamento);
+        medicamentos.update(medicamento,MetodosEmComum.conexaoBD(this));
 
         txtProximoHorario.setText(medicamento.getProximoHorario()+" horas.");
         checkBoxAviso.setChecked(false);

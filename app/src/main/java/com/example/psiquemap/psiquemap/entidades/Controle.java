@@ -14,15 +14,27 @@ public final class Controle
     private int flagSintomasSentido;
     private int flagFeedback;
 
+    private int flagPergDiario=0;
+    private int flagPergMini=0;
+    private int flagTodosSintomas=0;
+    private int flagMedicamento=0;
+
     public Controle(Paciente idPaciente)
     {
         setIdPaciente(idPaciente.getId());
+
         setFlagPaciente(0);
+
         setFlagQuestDiario(0);
         setFlagAcontecimento(0);
         setFlagQuestMini(0);
         setFlagSintomas(0);
         setFlagFeedback(0);
+
+        setFlagPergDiario(0);
+        setFlagPergMini(0);
+        setFlagTodosSintomas(0);
+        setFlagMedicamento(0);
     }
 
     public Controle(){}
@@ -103,6 +115,38 @@ public final class Controle
         ret = ret+"flagFeedback:"+this.getFlagFeedback();
 
         return ret;
+    }
+
+    public int getFlagPergDiario() {
+        return flagPergDiario;
+    }
+
+    public void setFlagPergDiario(int flagPergDiario) {
+        this.flagPergDiario = flagPergDiario;
+    }
+
+    public int getFlagPergMini() {
+        return flagPergMini;
+    }
+
+    public void setFlagPergMini(int flagPergMini) {
+        this.flagPergMini = flagPergMini;
+    }
+
+    public int getFlagTodosSintomas() {
+        return flagTodosSintomas;
+    }
+
+    public void setFlagTodosSintomas(int flagTodosSintomas) {
+        this.flagTodosSintomas = flagTodosSintomas;
+    }
+
+    public int getFlagMedicamento() {
+        return flagMedicamento;
+    }
+
+    public void setFlagMedicamento(int flagMedicamento) {
+        this.flagMedicamento = flagMedicamento;
     }
 
 }

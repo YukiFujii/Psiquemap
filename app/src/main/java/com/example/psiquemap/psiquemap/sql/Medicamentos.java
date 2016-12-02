@@ -16,14 +16,14 @@ import com.example.psiquemap.psiquemap.entidades.Medicamento;
 
 public class Medicamentos
 {
-    private SQLiteDatabase conn;
+    private static SQLiteDatabase conn;
 
     public Medicamentos(SQLiteDatabase conn)
     {
         this.conn = conn;
     }
 
-    private ContentValues preencheContentValues(Medicamento medicamento)
+    private static ContentValues preencheContentValues(Medicamento medicamento)
     {
         ContentValues values = new ContentValues();
 
@@ -41,15 +41,17 @@ public class Medicamentos
         return values;
     }
 
-    public void insert(Medicamento medicamento)
+    public static void insert(Medicamento medicamento,SQLiteDatabase c)
     {
-        if(this.hasPergunta(medicamento))
-            this.update(medicamento);
+        conn =c;
+
+        if(hasPergunta(medicamento))
+            update(medicamento);
         else
             conn.insertOrThrow("MEDICAMENTOS", null, preencheContentValues(medicamento));
     }
 
-    private boolean hasPergunta(Medicamento medicamento)
+    private static boolean hasPergunta(Medicamento medicamento)
     {
         Cursor cursor = conn.query("MEDICAMENTOS",null,"_id_PACIENTE = ? AND _id_MEDICACAO = ?",new String[]{medicamento.getIdPaciente(),medicamento.getIdMedicacao()},null,null,null);
 
@@ -59,8 +61,14 @@ public class Medicamentos
             return true;
     }
 
-    public void update(Medicamento medicamento)
+    private static void update(Medicamento medicamento)
     {
+        conn.update("MEDICAMENTOS",preencheContentValues(medicamento),"_id_PACIENTE = ? AND _id_MEDICACAO = ?",new String[]{medicamento.getIdPaciente(),medicamento.getIdMedicacao()});
+    }
+
+    public static void update(Medicamento medicamento,SQLiteDatabase c)
+    {
+        conn = c;
         conn.update("MEDICAMENTOS",preencheContentValues(medicamento),"_id_PACIENTE = ? AND _id_MEDICACAO = ?",new String[]{medicamento.getIdPaciente(),medicamento.getIdMedicacao()});
     }
 

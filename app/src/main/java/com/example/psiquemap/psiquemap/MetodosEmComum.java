@@ -10,9 +10,13 @@ import com.example.psiquemap.psiquemap.sql.Acontecimentos;
 import com.example.psiquemap.psiquemap.sql.Controles;
 import com.example.psiquemap.psiquemap.sql.DataBase;
 import com.example.psiquemap.psiquemap.sql.Feedbacks;
+import com.example.psiquemap.psiquemap.sql.Medicamentos;
 import com.example.psiquemap.psiquemap.sql.Pacientes;
+import com.example.psiquemap.psiquemap.sql.PerguntasDoDiario;
+import com.example.psiquemap.psiquemap.sql.PerguntasDoQuestionarioMINI;
 import com.example.psiquemap.psiquemap.sql.RespostasQuestionarioDiario;
 import com.example.psiquemap.psiquemap.sql.RespostasQuestionarioMINI;
+import com.example.psiquemap.psiquemap.sql.Sintomas;
 import com.example.psiquemap.psiquemap.sql.SintomasSentidos;
 
 import java.text.DateFormat;
@@ -115,6 +119,42 @@ public final class MetodosEmComum
         return conn;
     }
 
+    public static boolean verificarConexaoBD(Context context)
+    {
+        SQLiteDatabase conn = null;
+
+        try {
+
+            DataBase dataBase = new DataBase(context);
+            conn = dataBase.getWritableDatabase();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            ex.getStackTrace();
+            return false;
+        }
+
+    }
+
+    public static Context escolherContext()
+    {
+        if(MetodosEmComum.verificarConexaoBD(MainActivity.thisContext))
+        {
+            Log.i("Context", "MainActivity");
+            return MainActivity.thisContext;
+        }
+
+        if(MetodosEmComum.verificarConexaoBD(LoginActivity.thisContext))
+        {
+            Log.i("Context", "LoginActivity");
+            return LoginActivity.thisContext;
+        }
+
+        Log.i("Conexao com o banco", "Negada");
+        return LoginActivity.thisContext;
+    }
+
     public static String getIdPaciente(Context context)
     {
         Controles controles = new Controles(MetodosEmComum.conexaoBD(context));
@@ -171,5 +211,67 @@ public final class MetodosEmComum
     }
 
 
+    public static boolean rebecerDados(Dados dados)
+    {
+        SQLiteDatabase connDB = MetodosEmComum.conexaoBD(MetodosEmComum.escolherContext());
+
+        try
+        {
+            if(dados.getControle().getFlagPaciente()==1)
+            {
+                Pacientes.insert(dados.getPaciente(), connDB);
+                Log.i("Paciente", "inserido");
+                Controles.setFlagPaciente(dados.getControle().getIdPaciente(),0);
+            }
+
+            if(dados.getControle().getFlagPergDiario()==1)
+            {
+                for (int i=0;i<dados.getPerguntasQuestDiario().size();i++)
+                {
+                    PerguntasDoDiario.insert(dados.getPerguntasQuestDiario().get(i),connDB);
+                    Log.i("PerguntasDoDiario", "inserido");
+                }
+                Controles.setFlagPergDiario(dados.getControle().getIdPaciente(),0);
+            }
+
+            if(dados.getControle().getFlagPergMini()==1)
+            {
+                for (int i=0;i<dados.getPerguntasQuestMini().size();i++)
+                {
+                    PerguntasDoQuestionarioMINI.insert(dados.getPerguntasQuestMini().get(i),connDB);
+                    Log.i("PerguntasDoQuestMINI", "inserido");
+                }
+                Controles.setFlagPergMini(dados.getControle().getIdPaciente(),0);
+            }
+
+            if(dados.getControle().getFlagTodosSintomas()==1)
+            {
+                for (int i=0;i<dados.getTodosSintomas().size();i++)
+                {
+                    Sintomas.insert(dados.getTodosSintomas().get(i),connDB);
+                    Log.i("TodosSintomas", "inserido");
+                }
+                Controles.setFlagTodosSintomas(dados.getControle().getIdPaciente(),0);
+            }
+
+            if(dados.getControle().getFlagMedicamento()==1)
+            {
+                for (int i=0;i<dados.getMedicamentos().size();i++)
+                {
+                    Medicamentos.insert(dados.getMedicamentos().get(i),connDB);
+                    Log.i("Medicamentos", "inserido");
+                }
+                Controles.setFlagMedicamento(dados.getControle().getIdPaciente(),0);
+            }
+
+            return true;
+
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+
+    }
 
 }
