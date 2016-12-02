@@ -16,14 +16,14 @@ import com.example.psiquemap.psiquemap.entidades.Medicamento;
 
 public class Medicamentos
 {
-    private static SQLiteDatabase conn;
+    private SQLiteDatabase conn;
 
     public Medicamentos(SQLiteDatabase conn)
     {
         this.conn = conn;
     }
 
-    private static ContentValues preencheContentValues(Medicamento medicamento)
+    private ContentValues preencheContentValues(Medicamento medicamento)
     {
         ContentValues values = new ContentValues();
 
@@ -41,17 +41,15 @@ public class Medicamentos
         return values;
     }
 
-    public static void insert(Medicamento medicamento,SQLiteDatabase c)
+    public void insert(Medicamento medicamento)
     {
-        conn =c;
-
         if(hasPergunta(medicamento))
             update(medicamento);
         else
             conn.insertOrThrow("MEDICAMENTOS", null, preencheContentValues(medicamento));
     }
 
-    private static boolean hasPergunta(Medicamento medicamento)
+    private boolean hasPergunta(Medicamento medicamento)
     {
         Cursor cursor = conn.query("MEDICAMENTOS",null,"_id_PACIENTE = ? AND _id_MEDICACAO = ?",new String[]{medicamento.getIdPaciente(),medicamento.getIdMedicacao()},null,null,null);
 
@@ -61,15 +59,15 @@ public class Medicamentos
             return true;
     }
 
-    private static void update(Medicamento medicamento)
+    private void update(Medicamento medicamento)
     {
         conn.update("MEDICAMENTOS",preencheContentValues(medicamento),"_id_PACIENTE = ? AND _id_MEDICACAO = ?",new String[]{medicamento.getIdPaciente(),medicamento.getIdMedicacao()});
     }
 
-    public static void update(Medicamento medicamento,SQLiteDatabase c)
+    public void update(Medicamento medicamento,SQLiteDatabase conn)
     {
-        conn = c;
-        conn.update("MEDICAMENTOS",preencheContentValues(medicamento),"_id_PACIENTE = ? AND _id_MEDICACAO = ?",new String[]{medicamento.getIdPaciente(),medicamento.getIdMedicacao()});
+        this.conn = conn;
+        this.conn.update("MEDICAMENTOS",preencheContentValues(medicamento),"_id_PACIENTE = ? AND _id_MEDICACAO = ?",new String[]{medicamento.getIdPaciente(),medicamento.getIdMedicacao()});
     }
 
     public void delete(String idPaciente,String idMedicacao)

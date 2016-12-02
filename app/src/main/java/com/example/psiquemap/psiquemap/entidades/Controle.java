@@ -113,6 +113,14 @@ public final class Controle
         ret = ret+"flagSintomas:"+this.getFlagSintomas();
         ret = ret + " | ";
         ret = ret+"flagFeedback:"+this.getFlagFeedback();
+        ret = ret + " | ";
+        ret = ret+"flagPergDiario:"+this.getFlagPergDiario();
+        ret = ret + " | ";
+        ret = ret+"flagPergMini:"+this.getFlagPergMini();
+        ret = ret + " | ";
+        ret = ret+"flagTodosSintomas:"+this.getFlagTodosSintomas();
+        ret = ret + " | ";
+        ret = ret+"flagMedicamento:"+this.getFlagMedicamento();
 
         return ret;
     }

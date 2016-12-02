@@ -21,14 +21,14 @@ import com.example.psiquemap.psiquemap.tipos.de.perguntas.RespostaUnica;
 
 public class Controles {
 
-    private static SQLiteDatabase conn;
+    private SQLiteDatabase conn;
 
     public Controles(SQLiteDatabase conn)
     {
         this.conn = conn;
     }
 
-    private static ContentValues preencheContentValues(Controle controle)
+    private ContentValues preencheContentValues(Controle controle)
     {
         ContentValues values = new ContentValues();
 
@@ -43,7 +43,7 @@ public class Controles {
         return values;
     }
 
-    public static void insert(Controle controle)
+    public void insert(Controle controle)
     {
         if(hasControle(controle))
             update(controle);
@@ -51,7 +51,7 @@ public class Controles {
             conn.insertOrThrow("CONTROLE", null, preencheContentValues(controle));
     }
 
-    private static boolean hasControle(Controle controle)
+    private boolean hasControle(Controle controle)
     {
         Cursor cursor = conn.query("CONTROLE",null,"_id_PACIENTE = ?",new String[]{controle.getIdPaciente()},null,null,null);
 
@@ -72,7 +72,7 @@ public class Controles {
             return true;
     }
 
-    public static void update(Controle controle)
+    public void update(Controle controle)
     {
         conn.update("CONTROLE",preencheContentValues(controle),"_id_PACIENTE = ?",new String[]{controle.getIdPaciente()});
     }
@@ -93,7 +93,7 @@ public class Controles {
         return ret;
     }
 
-    public static Controle getControle (String idPaciente)
+    public Controle getControle (String idPaciente)
     {
         Controle controle = null;
 
@@ -120,7 +120,7 @@ public class Controles {
         return controle;
     }
 
-    public static void setFlagPaciente(String idPaciente,int valor)
+    public void setFlagPaciente(String idPaciente,int valor)
     {
         conn = MetodosEmComum.conexaoBD(MinhaConta.thisContext);
 
@@ -130,90 +130,72 @@ public class Controles {
         insert(controle);
     }
 
-    public static void setFlagQuestMini(Context context,String idPaciente,int valor)
+    public void setFlagQuestMini(String idPaciente,int valor)
     {
-        conn = MetodosEmComum.conexaoBD(context);
-
         Controle controle = getControle(idPaciente);
         controle.setFlagQuestMini(valor);
         Log.i("Controle",controle.toString());
         insert(controle);
     }
 
-    public static void setFlagQuestDiario(Context context,String idPaciente, int valor)
+    public void setFlagQuestDiario(String idPaciente, int valor)
     {
-        conn = MetodosEmComum.conexaoBD(context);
-
         Controle controle = getControle(idPaciente);
         controle.setFlagQuestDiario(valor);
         Log.i("Controle",controle.toString());
         insert(controle);
     }
 
-    public static void setFlagAcontecimento(String idPaciente,int valor)
+    public void setFlagAcontecimento(String idPaciente,int valor)
     {
-        conn = MetodosEmComum.conexaoBD(AcontecimentoDoDiario.thisContext);
-
         Controle controle = getControle(idPaciente);
         controle.setFlagAcontecimento(valor);
         Log.i("Controle",controle.toString());
         insert(controle);
     }
 
-    public static void setFlagSintomas(String idPaciente,int valor)
+    public void setFlagSintomas(String idPaciente,int valor)
     {
-        conn = MetodosEmComum.conexaoBD(SintomasScreen.thisContext);
-
         Controle controle = getControle(idPaciente);
         controle.setFlagSintomas(valor);
         Log.i("Controle",controle.toString());
         insert(controle);
     }
 
-    public static void setFlagFeedback(String idPaciente,int valor)
+    public void setFlagFeedback(String idPaciente,int valor)
     {
-        conn = MetodosEmComum.conexaoBD(FeedbackScreen.thisContext);
-
         Controle controle = getControle(idPaciente);
         controle.setFlagFeedback(valor);
         Log.i("Controle",controle.toString());
         insert(controle);
     }
 
-    public static void setFlagPergDiario(String idPaciente,int valor)
+    public void setFlagPergDiario(String idPaciente,int valor)
     {
-        conn = MetodosEmComum.conexaoBD(MetodosEmComum.escolherContext());
-
         Controle controle = getControle(idPaciente);
         controle.setFlagPergDiario(valor);
         Log.i("Controle",controle.toString());
         insert(controle);
     }
 
-    public static void setFlagPergMini(String idPaciente,int valor)
+    public void setFlagPergMini(String idPaciente,int valor)
     {
-        conn = MetodosEmComum.conexaoBD(MetodosEmComum.escolherContext());
-
         Controle controle = getControle(idPaciente);
         controle.setFlagPergMini(valor);
         Log.i("Controle",controle.toString());
         insert(controle);
     }
 
-    public static void setFlagTodosSintomas(String idPaciente,int valor)
+    public void setFlagTodosSintomas(String idPaciente,int valor)
     {
-        conn = MetodosEmComum.conexaoBD(MetodosEmComum.escolherContext());
-
         Controle controle = getControle(idPaciente);
         controle.setFlagTodosSintomas(valor);
         Log.i("Controle",controle.toString());
         insert(controle);
     }
 
-    public static void setFlagMedicamento(String idPaciente,int valor)
+    public void setFlagMedicamento(String idPaciente,int valor)
     {
-        conn = MetodosEmComum.conexaoBD(MetodosEmComum.escolherContext());
-
         Controle controle = getControle(idPaciente);
         controle.setFlagMedicamento(valor);
         Log.i("Controle",controle.toString());

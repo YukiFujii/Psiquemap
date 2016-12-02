@@ -99,8 +99,9 @@ public class MinhaConta extends AppCompatActivity {
 
             if(!noBanco.equals(this.paciente))
             {
+                Controles controles = new Controles(MetodosEmComum.conexaoBD(this));
                 this.pacientes.update(this.paciente);
-                Controles.setFlagPaciente(this.paciente.getId(),1);
+                controles.setFlagPaciente(this.paciente.getId(),1);
                 Log.i("FlagPaciente","alterado");
             }
 

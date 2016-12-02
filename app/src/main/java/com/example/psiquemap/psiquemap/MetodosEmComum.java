@@ -168,7 +168,8 @@ public final class MetodosEmComum
 
         Dados dados = new Dados();
 
-        dados.setControle(Controles.getControle(MetodosEmComum.getIdPaciente(context)));
+        Controles controles = new Controles(MetodosEmComum.conexaoBD(context));
+        dados.setControle(controles.getControle(MetodosEmComum.getIdPaciente(context)));
 
         if(dados.getControle().getFlagPaciente()==1)
         {
@@ -207,70 +208,6 @@ public final class MetodosEmComum
         }
 
         return dados;
-
-    }
-
-
-    public static boolean rebecerDados(Dados dados)
-    {
-        SQLiteDatabase connDB = MetodosEmComum.conexaoBD(MetodosEmComum.escolherContext());
-
-        try
-        {
-            if(dados.getControle().getFlagPaciente()==1)
-            {
-                Pacientes.insert(dados.getPaciente(), connDB);
-                Log.i("Paciente", "inserido");
-                Controles.setFlagPaciente(dados.getControle().getIdPaciente(),0);
-            }
-
-            if(dados.getControle().getFlagPergDiario()==1)
-            {
-                for (int i=0;i<dados.getPerguntasQuestDiario().size();i++)
-                {
-                    PerguntasDoDiario.insert(dados.getPerguntasQuestDiario().get(i),connDB);
-                    Log.i("PerguntasDoDiario", "inserido");
-                }
-                Controles.setFlagPergDiario(dados.getControle().getIdPaciente(),0);
-            }
-
-            if(dados.getControle().getFlagPergMini()==1)
-            {
-                for (int i=0;i<dados.getPerguntasQuestMini().size();i++)
-                {
-                    PerguntasDoQuestionarioMINI.insert(dados.getPerguntasQuestMini().get(i),connDB);
-                    Log.i("PerguntasDoQuestMINI", "inserido");
-                }
-                Controles.setFlagPergMini(dados.getControle().getIdPaciente(),0);
-            }
-
-            if(dados.getControle().getFlagTodosSintomas()==1)
-            {
-                for (int i=0;i<dados.getTodosSintomas().size();i++)
-                {
-                    Sintomas.insert(dados.getTodosSintomas().get(i),connDB);
-                    Log.i("TodosSintomas", "inserido");
-                }
-                Controles.setFlagTodosSintomas(dados.getControle().getIdPaciente(),0);
-            }
-
-            if(dados.getControle().getFlagMedicamento()==1)
-            {
-                for (int i=0;i<dados.getMedicamentos().size();i++)
-                {
-                    Medicamentos.insert(dados.getMedicamentos().get(i),connDB);
-                    Log.i("Medicamentos", "inserido");
-                }
-                Controles.setFlagMedicamento(dados.getControle().getIdPaciente(),0);
-            }
-
-            return true;
-
-        }
-        catch (Exception e)
-        {
-            return false;
-        }
 
     }
 

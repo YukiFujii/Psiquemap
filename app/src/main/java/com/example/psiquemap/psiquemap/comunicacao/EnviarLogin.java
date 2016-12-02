@@ -9,9 +9,12 @@ import com.example.psiquemap.psiquemap.MetodosEmComum;
 import com.example.psiquemap.psiquemap.entidades.Controle;
 import com.example.psiquemap.psiquemap.entidades.Dados;
 import com.example.psiquemap.psiquemap.entidades.Login;
+import com.example.psiquemap.psiquemap.entidades.Medicamento;
 import com.example.psiquemap.psiquemap.entidades.Paciente;
 import com.example.psiquemap.psiquemap.sql.Controles;
+import com.example.psiquemap.psiquemap.sql.Medicamentos;
 import com.example.psiquemap.psiquemap.sql.Pacientes;
+import com.example.psiquemap.psiquemap.sql.Sintomas;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -91,15 +94,54 @@ public class EnviarLogin extends AsyncTask<Login,Void,String> {
 
             String statusJson;
 
+            Controles controles = new Controles(MetodosEmComum.conexaoBD(LoginActivity.thisContext));
+
             try
             {
                 Dados dados = gson.fromJson(sb.toString(), Dados.class);
                 Log.i("Controle",dados.getControle().toString());
 
-                if(MetodosEmComum.rebecerDados(dados))
-                    statusJson = "true";
-                else
-                    statusJson = "false";
+                controles.insert(dados.getControle());
+
+                Log.i("FLAG Medicamento",dados.getControle().getFlagMedicamento()+"");
+                Log.i("FLAG PACIENTE",dados.getControle().getFlagPaciente()+"");
+                Log.i("FLAG TodosSintomas",dados.getControle().getFlagTodosSintomas()+"");
+
+                if(dados.getControle().getFlagTodosSintomas()==1)
+                {
+                    Sintomas sintomas = new Sintomas(MetodosEmComum.conexaoBD(LoginActivity.thisContext));
+                    for (int i = 0; i < dados.getTodosSintomas().size(); i++) {
+                        sintomas.insert(dados.getTodosSintomas().get(i));
+                        Log.i("Sintoma", "inserido");
+                    }
+                    controles.setFlagTodosSintomas(dados.getControle().getIdPaciente(),0);
+                }
+
+                if(dados.getControle().getFlagMedicamento()==1)
+                {
+                    Medicamentos medicamentos = new Medicamentos(MetodosEmComum.conexaoBD(LoginActivity.thisContext));
+                    for (int i=0;i<dados.getMedicamentos().size();i++)
+                    {
+                        Medicamento medicamento = dados.getMedicamentos().get(i);
+                        medicamento.setIdPaciente(dados.getControle().getIdPaciente());
+                        medicamento.setUltimoHorario("");
+                        medicamento.setProximoHorario("");
+                        medicamento.setQtdRestantesDoMedicamento(medicamento.calcularQtdRestantesDoMedicamento());
+                        medicamentos.insert(medicamento);
+                        Log.i("Medicamentos", "inserido");
+                    }
+                    controles.setFlagMedicamento(dados.getControle().getIdPaciente(),0);
+                }
+
+                if(dados.getControle().getFlagPaciente()==1)
+                {
+                    Pacientes pacientes = new Pacientes( MetodosEmComum.conexaoBD(LoginActivity.thisContext));
+                    pacientes.insert(dados.getPaciente());
+                    Log.i("Paciente", "inserido");
+                    controles.setFlagPaciente(dados.getControle().getIdPaciente(),0);
+                }
+
+                statusJson = "true";
 
             } catch (Exception e) {
                 statusJson = "false";

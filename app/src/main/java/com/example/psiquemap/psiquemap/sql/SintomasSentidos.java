@@ -83,7 +83,7 @@ public class SintomasSentidos {
     {
         ArrayAdapter<String> sintomasSentidos = new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1);
 
-        Cursor cursor = conn.query("SINTOMAS_SENTIDOS",null,"_id_PACIENTE = ? AND DATA = ?",new String[]{Pacientes.getIdPaciente(),MetodosEmComum.getDataAtual()},null,null,null);
+        Cursor cursor = conn.query("SINTOMAS_SENTIDOS",null,"_id_PACIENTE = ? AND DATA = ?",new String[]{MetodosEmComum.getIdPaciente(context),MetodosEmComum.getDataAtual()},null,null,null);
 
         cursor.moveToFirst();
 

@@ -20,9 +20,9 @@ public class SintomaSentido
 
     public SintomaSentido(){}
 
-    public SintomaSentido(String idCategoria,String idSintoma,String nome)
+    public SintomaSentido(String idPaciente,String idCategoria,String idSintoma,String nome)
     {
-        this.setIdPaciente(Pacientes.getIdPaciente());
+        this.setIdPaciente(idPaciente);
         this.setIdCategoria(idCategoria);
         this.setIdSintoma(idSintoma);
         this.setNome(nome);

@@ -24,9 +24,9 @@ public class Acontecimento implements Serializable
     private String titulo;
     private String descricao;
 
-    public Acontecimento(String sentimento,String titulo,String descricao)
+    public Acontecimento(String idPaciente,String sentimento,String titulo,String descricao)
     {
-        this.setIdPaciente(Pacientes.getIdPaciente());
+        this.setIdPaciente(idPaciente);
         this.setData(MetodosEmComum.getDataAtual());
         this.setHora(MetodosEmComum.getHoraAtual());
         this.setSentimento(sentimento);

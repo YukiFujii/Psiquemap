@@ -110,9 +110,10 @@ public class FeedbackScreen extends AppCompatActivity implements AdapterView.OnI
     {
         if(this.verificacao())
         {
+            Controles controles = new Controles(MetodosEmComum.conexaoBD(this));
             Feedback feedback = new Feedback(controles.getIdPaciente(),this.classificacaoFeedback,this.editObservacao.getText().toString());
             feedbacks.insert(feedback);
-            Controles.setFlagFeedback(MetodosEmComum.getIdPaciente(this),1);
+            controles.setFlagFeedback(MetodosEmComum.getIdPaciente(this),1);
 
             finish();
         }

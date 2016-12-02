@@ -13,14 +13,14 @@ import com.example.psiquemap.psiquemap.entidades.PerguntaDoQuestionario;
 
 public class PerguntasDoQuestionarioMINI
 {
-    private static SQLiteDatabase conn;
+    private SQLiteDatabase conn;
 
     public PerguntasDoQuestionarioMINI (SQLiteDatabase conn)
     {
         this.conn = conn;
     }
 
-    private static ContentValues preencheContentValues(PerguntaDoQuestionario pergunta)
+    private ContentValues preencheContentValues(PerguntaDoQuestionario pergunta)
     {
         ContentValues values = new ContentValues();
 
@@ -36,17 +36,15 @@ public class PerguntasDoQuestionarioMINI
         return values;
     }
 
-    public static void insert(PerguntaDoQuestionario pergunta,SQLiteDatabase c)
+    public void insert(PerguntaDoQuestionario pergunta)
     {
-        conn = c;
-
         if(hasPergunta(pergunta))
             update(pergunta);
         else
             conn.insertOrThrow("PERGUNTAS_DO_QUESTIONARIO_MINI",null,preencheContentValues(pergunta));
     }
 
-    private static boolean hasPergunta(PerguntaDoQuestionario pergunta)
+    private boolean hasPergunta(PerguntaDoQuestionario pergunta)
     {
         Cursor cursor = conn.query("PERGUNTAS_DO_QUESTIONARIO_MINI",null,"_id = ? AND QUESTAO = ?",new String[]{pergunta.getPerguntaId(),pergunta.getQuestao()},null,null,null);
 
@@ -56,14 +54,8 @@ public class PerguntasDoQuestionarioMINI
             return true;
     }
 
-    private static void update(PerguntaDoQuestionario pergunta)
+    public void update(PerguntaDoQuestionario pergunta)
     {
-        conn.update("PERGUNTAS_DO_QUESTIONARIO_MINI",preencheContentValues(pergunta),"_id = ? AND QUESTAO = ?",new String[]{pergunta.getPerguntaId(),pergunta.getQuestao()});
-    }
-
-    public static void update(PerguntaDoQuestionario pergunta,SQLiteDatabase c)
-    {
-        conn=c;
         conn.update("PERGUNTAS_DO_QUESTIONARIO_MINI",preencheContentValues(pergunta),"_id = ? AND QUESTAO = ?",new String[]{pergunta.getPerguntaId(),pergunta.getQuestao()});
     }
 

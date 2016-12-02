@@ -12,14 +12,14 @@ import com.example.psiquemap.psiquemap.entidades.PerguntaDoQuestionario;
 
 public class PerguntasDoDiario
 {
-    private static SQLiteDatabase conn;
+    private SQLiteDatabase conn;
 
     public PerguntasDoDiario(SQLiteDatabase conn)
     {
         this.conn = conn;
     }
 
-    private static ContentValues preencheContentValues(PerguntaDoQuestionario pergunta)
+    private ContentValues preencheContentValues(PerguntaDoQuestionario pergunta)
     {
         ContentValues values = new ContentValues();
 
@@ -31,16 +31,15 @@ public class PerguntasDoDiario
         return values;
     }
 
-    public static void insert(PerguntaDoQuestionario pergunta,SQLiteDatabase c)
+    public void insert(PerguntaDoQuestionario pergunta)
     {
-        conn = c;
         if(hasPergunta(pergunta))
             update(pergunta);
         else
             conn.insertOrThrow("PERGUNTAS_DO_DIARIO", null, preencheContentValues(pergunta));
     }
 
-    private static boolean hasPergunta(PerguntaDoQuestionario pergunta)
+    private boolean hasPergunta(PerguntaDoQuestionario pergunta)
     {
         Cursor cursor = conn.query("PERGUNTAS_DO_DIARIO",null,"_id = ?",new String[]{pergunta.getPerguntaId()},null,null,null);
 
@@ -50,7 +49,7 @@ public class PerguntasDoDiario
             return true;
     }
 
-    public static void update(PerguntaDoQuestionario pergunta)
+    public void update(PerguntaDoQuestionario pergunta)
     {
         conn.update("PERGUNTAS_DO_DIARIO",preencheContentValues(pergunta),"_id = ?",new String[]{pergunta.getPerguntaId()});
     }

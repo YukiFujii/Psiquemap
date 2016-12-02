@@ -122,12 +122,13 @@ public class SintomasScreen extends AppCompatActivity {
             }
             else
             {
-                SintomaSentido sintomaSentido = new SintomaSentido(sintoma.getIdCategoria(),sintoma.getIdSintoma(),sintoma.getNome());
+                SintomaSentido sintomaSentido = new SintomaSentido(MetodosEmComum.getIdPaciente(this),sintoma.getIdCategoria(),sintoma.getIdSintoma(),sintoma.getNome());
                 SintomasSentidos sintomasSentidos = new SintomasSentidos(this.conn);
 
                 sintomasSentidos.insert(sintomaSentido);
 
-                Controles.setFlagSintomas(MetodosEmComum.getIdPaciente(this),1);
+                Controles controles = new Controles(MetodosEmComum.conexaoBD(this));
+                controles.setFlagSintomas(MetodosEmComum.getIdPaciente(this),1);
 
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

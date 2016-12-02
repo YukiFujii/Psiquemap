@@ -88,10 +88,7 @@ public class EnviarDados extends AsyncTask<Dados,Void,String> {
                 dados = gson.fromJson(sb.toString(), Dados.class);
                 Log.i("Controle",dados.getControle().toString());
 
-                if(MetodosEmComum.rebecerDados(dados))
                     statusJson = "true";
-                else
-                    statusJson = "false";
 
             } catch (Exception e) {
                 statusJson = "false";

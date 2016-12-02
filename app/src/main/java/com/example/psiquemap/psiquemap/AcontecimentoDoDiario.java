@@ -66,12 +66,13 @@ public class AcontecimentoDoDiario extends AppCompatActivity implements AdapterV
             if(this.conexaoBD())
             {
                 acontecimentos = new Acontecimentos(conn);
+                Controles controles = new Controles(MetodosEmComum.conexaoBD(this));
 
-                Acontecimento acontecimento = new Acontecimento(this.sentimentoDoAcontecimento, this.editTitulo.getText().toString(), this.editDescricao.getText().toString());
+                Acontecimento acontecimento = new Acontecimento(MetodosEmComum.getIdPaciente(this),this.sentimentoDoAcontecimento, this.editTitulo.getText().toString(), this.editDescricao.getText().toString());
 
                 acontecimentos.insert(acontecimento);
 
-                Controles.setFlagAcontecimento(MetodosEmComum.getIdPaciente(this),1);
+                controles.setFlagAcontecimento(MetodosEmComum.getIdPaciente(this),1);
 
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
